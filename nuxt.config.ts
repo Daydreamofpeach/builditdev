@@ -6,6 +6,13 @@ export default defineNuxtConfig({
 		"reka-ui/nuxt",
 		"@nuxt/eslint"
 	],
+	runtimeConfig: {
+		githubClientId: process.env.GITHUB_CLIENT_ID,
+		githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
+		public: {
+			githubClientId: process.env.GITHUB_CLIENT_ID
+		}
+	},
 	app: {
 		head: {
 			title: "Nuxtor",
