@@ -1,12 +1,41 @@
+# Dependencies
 node_modules
-.DS_Store
-*.log*
-.data
+.pnpm-store
+.bun
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Build output
+dist
+.output
 .nuxt
 .nitro
 .cache
-.output
-.env
-.cargo
-dist
+build
+
+# IDE
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Tauri
 src-tauri/target

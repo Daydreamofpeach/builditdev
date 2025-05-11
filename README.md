@@ -49,7 +49,7 @@ Check more screenshots at [preview](https://github.com/NicolaSpadari/nuxtor/blob
 ## Setup
 
   - Before running this app, you need to configure your environment with Rust. Take a look at the [Tauri docs](https://v2.tauri.app/start/prerequisites).
-  - This project enforces [pnpm](https://pnpm.io). In order to use another package manager you need to update `package.json` and `tauri.conf.json`
+  - This project uses [Bun](https://bun.sh) as its package manager. Make sure you have it installed on your system.
   - The frontend runs on the usual port `3000` of Nuxt, the Tauri server uses the port `3001`. This settings are customizable in the `nuxt.config.ts` and `tauri.conf.json`.
   - Once ready, follow these commands:
 
@@ -61,10 +61,10 @@ Check more screenshots at [preview](https://github.com/NicolaSpadari/nuxtor/blob
   $ cd my-nuxtor-app
 
   # install dependencies
-  $ pnpm install
+  $ bun install
 
   # start the project
-  $ pnpm run tauri:dev
+  $ bun run tauri:dev
   ```
 
   This will run the Nuxt frontend and will launch the Tauri window.
@@ -72,7 +72,7 @@ Check more screenshots at [preview](https://github.com/NicolaSpadari/nuxtor/blob
 ## Build
 
   ```sh
-  $ pnpm run tauri:build
+  $ bun run tauri:build
   ```
 
 This command will generate the Nuxt static output and bundle the project under `src-tauri/target`.
@@ -80,7 +80,7 @@ This command will generate the Nuxt static output and bundle the project under `
 ## Debug
 
   ```sh
-  $ pnpm run tauri:build:debug
+  $ bun run tauri:build:debug
   ```
 
 The same Tauri bundle will generate under `src-tauri/target`, but with the ability to open the console.
