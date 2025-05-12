@@ -22,21 +22,62 @@
 								</p>
 								
 								<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-									<UCard class="cursor-pointer" @click="openOrganizationPanel">
-										<div class="flex flex-col items-center p-4">
-											<UIcon name="i-lucide-building" class="text-primary text-3xl mb-2" />
-											<h3 class="font-semibold mb-1">Organizations</h3>
-											<p class="text-center text-sm text-gray-400">Manage your organizations and view their status</p>
-										</div>
-									</UCard>
-									
-									<UCard class="cursor-pointer" @click="openUserPanel">
-										<div class="flex flex-col items-center p-4">
-											<UIcon name="lucide-user-cog" class="text-primary text-3xl mb-2" />
-											<h3 class="font-semibold mb-1">Users</h3>
-											<p class="text-center text-sm text-gray-400">View your users panel and add new users</p>
-										</div>
-									</UCard>
+									<!-- Organizations Card and List -->
+									<div>
+										<UCard class="cursor-pointer" @click="openOrganizationPanel">
+											<div class="flex flex-col items-center p-4">
+												<UIcon name="i-lucide-building" class="text-primary text-3xl mb-2" />
+												<h3 class="font-semibold mb-1">Organizations</h3>
+												<p class="text-center text-sm text-gray-400">Manage your organizations and view their status</p>
+											</div>
+										</UCard>
+										<!-- Organizations List Section -->
+										<UCard class="mt-2">
+											<template #header>
+												<div class="flex justify-between items-center cursor-pointer" @click="isOrganizationsListExpanded = !isOrganizationsListExpanded">
+													<h4 class="font-semibold">Organizations List</h4>
+													<UIcon :name="isOrganizationsListExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
+												</div>
+											</template>
+											<div v-if="isOrganizationsListExpanded" class="transition-all duration-300">
+												<ul class="divide-y divide-primary">
+													<li v-for="org in organizationsList" :key="org.name" class="py-2 flex flex-col">
+														<span class="font-bold text-primary truncate break-all max-w-full">{{ org.name }}</span>
+														<span class="text-gray-400 ml-2 truncate break-all max-w-full">{{ org.description }}</span>
+													</li>
+													<li v-if="organizationsList.length === 0" class="text-gray-400 py-2">No organizations found.</li>
+												</ul>
+											</div>
+										</UCard>
+									</div>
+									<!-- Users Card and List -->
+									<div>
+										<UCard class="cursor-pointer" @click="openUserPanel">
+											<div class="flex flex-col items-center p-4">
+												<UIcon name="lucide-user-cog" class="text-primary text-3xl mb-2" />
+												<h3 class="font-semibold mb-1">Users</h3>
+												<p class="text-center text-sm text-gray-400">View your users panel and add new users</p>
+											</div>
+										</UCard>
+										<!-- Users List Section -->
+										<UCard class="mt-2">
+											<template #header>
+												<div class="flex justify-between items-center cursor-pointer" @click="isUsersListExpanded = !isUsersListExpanded">
+													<h4 class="font-semibold">Users List</h4>
+													<UIcon :name="isUsersListExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
+												</div>
+											</template>
+											<div v-if="isUsersListExpanded" class="transition-all duration-300">
+												<ul class="divide-y divide-primary">
+													<li v-for="user in usersList" :key="user.username" class="py-2 flex flex-col">
+														<span class="font-bold text-primary truncate break-all max-w-full">{{ user.username }}</span>
+														<span class="text-gray-400 ml-2 truncate break-all max-w-full">{{ user.email }}</span>
+													</li>
+													<li v-if="usersList.length === 0" class="text-gray-400 py-2">No users found.</li>
+												</ul>
+											</div>
+										</UCard>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -308,7 +349,7 @@
 	import OrganizationPanel from "~/components/OrganizationPanel.vue";
 	import { useAuth } from "~/composables/useAuth";
 	import { useCurrentUser } from "~/composables/useCurrentUser";
-	import { useTauriNotificationSendNotification } from "#imports";
+	import { useTauriNotificationSendNotification, useTauriStoreLoad } from "#imports";
 	import { z } from 'zod';
 
 	type DisplayMode = "list" | "grid" | "table";
@@ -346,6 +387,12 @@
 	// Organization panel modal state
 	const organizationPanelRef = ref();
 
+	// Under the Users and Organizations cards, add collapsible lists
+	const isUsersListExpanded = ref(false);
+	const isOrganizationsListExpanded = ref(false);
+	const usersList = ref<any[]>([]);
+	const organizationsList = ref<any[]>([]);
+
 	function toggleContentSection() {
 		isContentSectionExpanded.value = !isContentSectionExpanded.value;
 	}
@@ -377,11 +424,11 @@
 	const handleGitHubLogout = async () => {
 		githubLogout();
 		if (currentUser.value) {
-			const userStore = await useUserStore();
-			await userStore.updateUser(currentUser.value.email, {
+			const userStore = await useTauriStoreLoad("users.bin", { autoSave: true });
+			await userStore.set(currentUser.value.email, JSON.stringify({
 				isGithubConnected: false,
 				githubToken: undefined
-			});
+			}));
 			currentUser.value = {
 				...currentUser.value,
 				isGithubConnected: false,
@@ -565,6 +612,7 @@
 			await loadRepos(true);
 			setupInfiniteScroll();
 		}
+		await Promise.all([fetchUsersList(), fetchOrganizationsList()]);
 	});
 
 	// Cleanup
@@ -604,6 +652,52 @@
 	function openOrganizationPanel() {
 		if (organizationPanelRef.value) {
 			organizationPanelRef.value.open = true;
+		}
+	}
+
+	async function fetchUsersList() {
+		try {
+			const store = await useTauriStoreLoad("users.bin", { autoSave: false });
+			const entries = await store.entries();
+			usersList.value = entries
+				.filter(([key]) => key.startsWith("user_"))
+				.map(([_, value]) => {
+					try {
+						const user = JSON.parse(value as string);
+						return {
+							username: user.username,
+							email: user.email
+						};
+					} catch {
+						return null;
+					}
+				})
+				.filter(Boolean);
+		} catch (e) {
+			usersList.value = [];
+		}
+	}
+
+	async function fetchOrganizationsList() {
+		try {
+			const store = await useTauriStoreLoad("organizations.bin", { autoSave: false });
+			const entries = await store.entries();
+			organizationsList.value = entries
+				.filter(([key]) => key.startsWith("org_"))
+				.map(([_, value]) => {
+					try {
+						const org = JSON.parse(value as string);
+						return {
+							name: org.name,
+							description: org.description
+						};
+					} catch {
+						return null;
+					}
+				})
+				.filter(Boolean);
+		} catch (e) {
+			organizationsList.value = [];
 		}
 	}
 </script>
