@@ -20,7 +20,7 @@
 	}
 	
 	html, body {
-		@apply  text-white rounded-b-4xl;
+		@apply  text-primary rounded-b-4xl;
 	}
 }
 

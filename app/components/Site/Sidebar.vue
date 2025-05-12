@@ -1,7 +1,9 @@
 <template>
 	<USlideover :open="showSidebar" @update:open="showSidebar = false">
 		<template #title>
-			<LogoWithTitle />
+			<h2 class="text-xl font-bold">
+				Buildit
+			</h2>
 		</template>
 		<template #description>
 			<VisuallyHidden>Description</VisuallyHidden>
@@ -14,7 +16,7 @@
 					<SvgoLogo
 						:filled="true"
 						:font-controlled="false"
-						class="mx-auto z-11 rounded-4xl bg-primary size-20 border-8 border-primary"
+						class="mx-auto z-11 rounded-2xl bg-primary size-20 border-8 border-primary"
 					/>
 				</div>
 				

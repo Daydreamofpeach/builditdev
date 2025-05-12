@@ -4,7 +4,7 @@
 			<div class="p-4 space-y-6">	<SvgoLogo
 				:filled="true"
 				:font-controlled="false"
-				class="mx-auto z-11 rounded-4xl top-4  bg-primary size-20 border-8 border-primary"
+				class="mx-auto z-11 rounded-2xl top-4  bg-primary size-20 border-8 border-primary"
 			/>
 				<!-- Local Login Form -->
 				<UForm :state="formState" :schema="schema" @submit="handleLocalLogin">
