@@ -22,11 +22,11 @@
 								</p>
 								
 								<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-									<UCard>
+									<UCard class="cursor-pointer" @click="openOrganizationPanel">
 										<div class="flex flex-col items-center p-4">
-											<UIcon name="i-heroicons-document-text" class="text-primary text-3xl mb-2" />
-											<h3 class="font-semibold mb-1">Projects</h3>
-											<p class="text-center text-sm text-gray-400">Manage your projects and view their status</p>
+											<UIcon name="i-lucide-building" class="text-primary text-3xl mb-2" />
+											<h3 class="font-semibold mb-1">Organizations</h3>
+											<p class="text-center text-sm text-gray-400">Manage your organizations and view their status</p>
 										</div>
 									</UCard>
 									
@@ -45,6 +45,9 @@
 				
 				<!-- User Panel Modal -->
 				<UserPanel ref="userPanelRef" />
+				
+				<!-- Organization Panel Modal -->
+				<OrganizationPanel ref="organizationPanelRef" />
 				
 				<template v-if="loading">
 					<p>Loading...</p>
@@ -302,6 +305,7 @@
 	import GlowyCard from "@/components/stunning/GlowyCard.vue";
 	import GlowyCardWrapper from "@/components/stunning/GlowyCardWrapper.vue";
 	import UserPanel from "~/components/UserPanel.vue";
+	import OrganizationPanel from "~/components/OrganizationPanel.vue";
 	import { useAuth } from "~/composables/useAuth";
 	import { useCurrentUser } from "~/composables/useCurrentUser";
 	import { useTauriNotificationSendNotification } from "#imports";
@@ -338,6 +342,9 @@
 	
 	// User panel modal state
 	const userPanelRef = ref();
+
+	// Organization panel modal state
+	const organizationPanelRef = ref();
 
 	function toggleContentSection() {
 		isContentSectionExpanded.value = !isContentSectionExpanded.value;
@@ -591,6 +598,12 @@
 	function openUserPanel() {
 		if (userPanelRef.value) {
 			userPanelRef.value.open = true;
+		}
+	}
+
+	function openOrganizationPanel() {
+		if (organizationPanelRef.value) {
+			organizationPanelRef.value.open = true;
 		}
 	}
 </script>

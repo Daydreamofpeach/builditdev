@@ -8,14 +8,14 @@
 			<SvgoLogo
 				:filled="true"
 				:font-controlled="false"
-				class="mx-auto animate-pulse z-11 rounded-4xl top-4 infinite bg-primary size-40 border-8 border-primary"
+				class="mx-auto animate-pulse z-11 rounded-4xl top-8 infinite bg-primary size-40 border-8 border-primary"
 			/>
 
 			<div class="flex flex-col items-center gap-2">
 				<div class="flex justify-center z-40 items-center">
 					<h1 class="flex">
 						<span
-							v-for="(letter, index) in 'Start'"
+							v-for="(letter, index) in 'Welcome'"
 							:key="index"
 							class="text-4xl sm:text-5xl font-bold themed text-primary transition-all duration-150 cursor-pointer relative font-silkscreen"
 							:class="{
@@ -28,11 +28,12 @@
 							{{ letter }}
 						</span>
 					</h1>
-				</div>
+					
+				</div><h4 class="text-lg text-white z-50" > to </h4>
 				<div class="w-full flex flex-col items-center justify-center" style="height: 180px; margin-top: 24px; margin-bottom: 24px;">
 					<BuilditParticles />
 					<BuilditParticles />
-				</div><div class="flex flex-wrap justify-center pt-10 gap-3 ">
+				</div><div class="flex flex-wrap justify-center pt-6 gap-3 ">
 					<GlowyCardWrapper>
 						<GlowyCard>
 							<UButton
@@ -58,7 +59,7 @@
 						</GlowyCard>
 					</GlowyCardWrapper>
 				</div>
-				<h4 class="text-2xl z-50 text-center -translate-y-40 flex sm-pt-0 pt-10 justify-center items-center themed ">
+				<h4 class="text-2xl z-50 text-center -translate-y-40 flex sm-pt-4 pt-10 justify-center items-center themed ">
 					Start Building Your Next Project
 				</h4>
 			</div>
