@@ -1,7 +1,7 @@
 <template>
 	<div class="grid place-items-center py-12 md:py-24">
 		<div class="flex flex-col items-center gap-y-4 md:gap-y-8">
-			<p class="text-(--ui-success) font-semibold">
+			<p class="text-(--ui-primary) font-semibold">
 				404
 			</p>
 			<div class="text-center space-y-3">

@@ -1,7 +1,7 @@
-@import "tailwindcss" theme(static);
-@import "@nuxt/ui";
+@import 'tailwindcss';
+@import '@nuxt/ui';
 
-@theme {
+:root {
 	--font-heading: "Montserrat", sans-serif;
 	--font-sans: "Inter", sans-serif;
 
@@ -10,18 +10,21 @@
 	--color-success: var(--ui-color-success-500);
 	--color-info: var(--ui-color-info-500);
 	--color-warning: var(--ui-color-warning-500);
-	--color-error: var(--ui-color-error-500)
+	--color-error: var(--ui-color-error-500);
+	--color-neutral: var(--ui-color-neutral-500);
 }
 
 @layer base {
-	-webkit-tap-highlight-color: transparent;
+	* {
+		-webkit-tap-highlight-color: transparent;
+	}
+	
+	html, body {
+		@apply  text-white rounded-b-4xl;
+	}
 }
 
 @layer utilities {
-	img{
-		user-select: none;
-		-webkit-user-drag: none;
-	}
 	.flex-center {
 		@apply flex justify-center items-center;
 	}
@@ -46,4 +49,14 @@
 .layout-enter-from,
 .layout-leave-to {
 	@apply opacity-0;
+}
+
+/* Hide scrollbar */
+* {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+	display: none;
 }

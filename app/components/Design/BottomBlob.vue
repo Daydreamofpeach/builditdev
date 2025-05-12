@@ -1,23 +1,11 @@
 <template>
 	<div class="top=1/5 pointer-events-none absolute inset-x-0 transform-gpu blur-3xl -z-10" aria-hidden="true">
-		<div class="blob relative left-[calc(50%+36rem)] aspect-[1155/678] w-[72.1875rem] from-(--color-primary) to-(--color-primary) bg-gradient-to-bl opacity-50 -translate-x-1/2 animate-blob" />
+		<div class="blob relative left-[calc(50%+36rem)] aspect-[1155/678] w-[72.1875rem] from-(--color-primary) to-(--color-primary) bg-gradient-to-br opacity-30 -translate-x-1/2" />
 	</div>
 </template>
 
 <style scoped>
-@keyframes blob {
-	0% {
+	.blob{
 		clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%);
 	}
-	50% {
-		clip-path: polygon(61% 44%, 84% 45%, 97% 27%, 85% 0%, 65% 12%, 52% 32%, 60% 62%, 42% 68%, 47% 58%, 45% 34%, 27% 76%, 0% 64%, 17% 100%, 27% 76%, 76% 97%, 61% 44%);
-	}
-	100% {
-		clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%);
-	}
-}
-
-.blob {
-	clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%);
-}
 </style>

@@ -17,7 +17,7 @@
 						<span
 							v-for="(letter, index) in 'Start'"
 							:key="index"
-							class="text-4xl sm:text-5xl font-bold themed transition-all duration-150 cursor-pointer relative font-silkscreen"
+							class="text-4xl sm:text-5xl font-bold themed text-primary transition-all duration-150 cursor-pointer relative font-silkscreen"
 							:class="{
 								[hoverColors[index] ? `text-${hoverColors[index]}` : '']: hoverColors[index]
 							}"
@@ -39,6 +39,7 @@
 								variant="outline"
 								size="xl"
 								@click="showLogin = true"
+								
 							>
 								Login
 							</UButton>
@@ -50,6 +51,7 @@
 								variant="solid"
 								size="xl"
 								@click="showSignup = true"
+								color="primary"
 							>
 								Sign Up
 							</UButton>
@@ -98,6 +100,7 @@
 	import SignupSlideover from "@/components/Auth/SignupSlideover.vue";
 	import GlowyCard from "@/components/stunning/GlowyCard.vue";
 	import GlowyCardWrapper from "@/components/stunning/GlowyCardWrapper.vue";
+	import BuilditParticles from "@/components/BuilditParticles.vue";
 
 
 	type ColorOption = "red" | "orange" | "amber" | "yellow" | "lime" | "green" | "emerald" | "teal" | "cyan" | "sky" | "blue" | "indigo" | "violet" | "purple" | "fuchsia" | "pink" | "rose" | "slate" | "gray" | "zinc" | "neutral" | "stone";

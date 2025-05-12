@@ -4,7 +4,13 @@
 		<SiteSidebar />
 
 		<UContainer>
+		
+			<div class=" overflow-hidden">
+			<DesignTopBlob />
+			<DesignBottomBlob />
+
 			<slot />
+		</div>
 		</UContainer>
 	</div>
 </template>
