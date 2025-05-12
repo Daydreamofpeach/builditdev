@@ -2,6 +2,50 @@
 	<div class="flex flex-col items-center justify-center min-h-screen">
 		<GlowyCardWrapper>
 			<GlowyCard class="p-8 flex flex-col items-center gap-4 w-full max-w-4xl">
+				<!-- New Collapsible Content Section -->
+				<div class="w-full mb-6">
+					<UCard>
+						<template #header>
+							<div class="flex justify-between items-center w-full cursor-pointer" @click="toggleContentSection">
+								<h2 class="text-xl font-bold">Content</h2>
+								<UIcon 
+									:name="isContentSectionExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" 
+									class="transition-transform"
+								/>
+							</div>
+						</template>
+						
+						<div v-if="isContentSectionExpanded" class="transition-all duration-300">
+							<div class="py-4 space-y-4">
+								<p class="text-gray-400">
+									This section contains your content and recent activities. You can manage your projects, view statistics, and access quick links here.
+								</p>
+								
+								<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+									<UCard>
+										<div class="flex flex-col items-center p-4">
+											<UIcon name="i-heroicons-document-text" class="text-primary text-3xl mb-2" />
+											<h3 class="font-semibold mb-1">Projects</h3>
+											<p class="text-center text-sm text-gray-400">Manage your projects and view their status</p>
+										</div>
+									</UCard>
+									
+									<UCard class="cursor-pointer" @click="openUserPanel">
+										<div class="flex flex-col items-center p-4">
+											<UIcon name="lucide-user-cog" class="text-primary text-3xl mb-2" />
+											<h3 class="font-semibold mb-1">Users</h3>
+											<p class="text-center text-sm text-gray-400">View your users panel and add new users</p>
+										</div>
+									</UCard>
+								</div>
+							</div>
+						</div>
+					</UCard>
+				</div>
+				
+				<!-- User Panel Modal -->
+				<UserPanel ref="userPanelRef" />
+				
 				<template v-if="loading">
 					<p>Loading...</p>
 				</template>
@@ -257,9 +301,11 @@
 	import { useRouter } from "vue-router";
 	import GlowyCard from "@/components/stunning/GlowyCard.vue";
 	import GlowyCardWrapper from "@/components/stunning/GlowyCardWrapper.vue";
+	import UserPanel from "~/components/UserPanel.vue";
 	import { useAuth } from "~/composables/useAuth";
 	import { useCurrentUser } from "~/composables/useCurrentUser";
-	import { useTauriNotificationSendNotification } from "~/composables/useTauriNotificationSendNotification";
+	import { useTauriNotificationSendNotification } from "#imports";
+	import { z } from 'zod';
 
 	type DisplayMode = "list" | "grid" | "table";
 	type SortKey = "name" | "language" | "stargazers_count" | "forks_count" | "updated_at";
@@ -286,6 +332,16 @@
 	let observer: IntersectionObserver | null = null;
 	const searchQuery = ref("");
 	const searchTimeout = ref<NodeJS.Timeout | null>(null);
+	
+	// Content section state
+	const isContentSectionExpanded = ref(true);
+	
+	// User panel modal state
+	const userPanelRef = ref();
+
+	function toggleContentSection() {
+		isContentSectionExpanded.value = !isContentSectionExpanded.value;
+	}
 
 	// Display options
 	const displayMode = ref<DisplayMode>("list");
@@ -529,6 +585,12 @@
 			expandedRepos.value.push(repoId);
 		} else {
 			expandedRepos.value.splice(index, 1);
+		}
+	}
+
+	function openUserPanel() {
+		if (userPanelRef.value) {
+			userPanelRef.value.open = true;
 		}
 	}
 </script>

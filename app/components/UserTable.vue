@@ -1,55 +1,61 @@
 <template>
-	<UTable
-		v-model:expanded="expanded"
-		:data="users"
-		:columns="columns"
-		:ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
-		class="flex-1"
-	>
-		<template #expanded="{ row }">
-			<div class="p-4 space-y-4">
-				<div class="grid grid-cols-2 gap-4">
-					<div>
-						<h3 class="font-medium text-gray-900">User Details</h3>
-						<dl class="mt-2 space-y-2">
-							<div class="flex">
-								<dt class="w-24 text-sm text-gray-500">Username:</dt>
-								<dd class="text-sm text-gray-900">{{ row.original.username }}</dd>
-							</div>
-							<div class="flex">
-								<dt class="w-24 text-sm text-gray-500">Email:</dt>
-								<dd class="text-sm text-gray-900">{{ row.original.email }}</dd>
-							</div>
-							<div class="flex">
-								<dt class="w-24 text-sm text-gray-500">Role:</dt>
-								<dd class="text-sm text-gray-900">
-									<UBadge :color="getRoleColor(row.original.role)" variant="subtle">
-										{{ row.original.role }}
+	<div class="w-full overflow-x-auto">
+		<UTable
+			v-model:expanded="expanded"
+			:data="users"
+			:columns="columns"
+			:ui="{ 
+				tr: 'data-[expanded=true]:bg-elevated/50',
+				wrapper: 'min-w-full',
+				table: 'min-w-full'
+			}"
+			class="flex-1"
+		>
+			<template #expanded="{ row }">
+				<div class="p-4 space-y-4">
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div>
+							<h3 class="font-medium text-gray-900 dark:text-gray-100">User Details</h3>
+							<dl class="mt-2 space-y-2">
+								<div class="flex">
+									<dt class="w-24 text-sm text-gray-500 dark:text-gray-400">Username:</dt>
+									<dd class="text-sm text-gray-900 dark:text-gray-100">{{ row.original.username }}</dd>
+								</div>
+								<div class="flex">
+									<dt class="w-24 text-sm text-gray-500 dark:text-gray-400">Email:</dt>
+									<dd class="text-sm text-gray-900 dark:text-gray-100">{{ row.original.email }}</dd>
+								</div>
+								<div class="flex">
+									<dt class="w-24 text-sm text-gray-500 dark:text-gray-400">Role:</dt>
+									<dd class="text-sm text-gray-900 dark:text-gray-100">
+										<UBadge :color="getRoleColor(row.original.role)" variant="subtle">
+											{{ row.original.role }}
+										</UBadge>
+									</dd>
+								</div>
+							</dl>
+						</div>
+						<div>
+							<h3 class="font-medium text-gray-900 dark:text-gray-100">Organizations</h3>
+							<div class="mt-2 flex flex-wrap gap-2">
+								<template v-if="row.original.organizations?.length">
+									<UBadge
+										v-for="org in row.original.organizations"
+										:key="org.name"
+										color="primary"
+										variant="subtle"
+									>
+										{{ org.name }}
 									</UBadge>
-								</dd>
+								</template>
+								<span v-else class="text-sm text-gray-500 dark:text-gray-400">No organizations</span>
 							</div>
-						</dl>
-					</div>
-					<div>
-						<h3 class="font-medium text-gray-900">Organizations</h3>
-						<div class="mt-2 flex flex-wrap gap-2">
-							<template v-if="row.original.organizations?.length">
-								<UBadge
-									v-for="org in row.original.organizations"
-									:key="org.name"
-									color="primary"
-									variant="subtle"
-								>
-									{{ org.name }}
-								</UBadge>
-							</template>
-							<span v-else class="text-sm text-gray-500">No organizations</span>
 						</div>
 					</div>
 				</div>
-			</div>
-		</template>
-	</UTable>
+			</template>
+		</UTable>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -165,5 +171,24 @@
 	];
 </script>
 
-<style scoped></style>
+<style scoped>
+.overflow-x-auto {
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-primary-500) var(--color-gray-800);
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+	height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+	background: var(--color-gray-800);
+	border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+	background-color: var(--color-primary-500);
+	border-radius: 3px;
+}
+</style>
  

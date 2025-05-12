@@ -1,18 +1,13 @@
 <template>
-	<UTabs
-		:items="items"
-		variant="link"
-		class="gap-4 w-full"
-		:ui="{ trigger: 'flex-1' }"
-	>
-		<template #users="{ item }">
+	<UModal v-model:open="open" title="User Management Panel" :ui="{ footer: 'justify-end' }">
+		<template #body>
 			<div class="space-y-6">
 				<div class="flex justify-between items-center">
 					<p class="text-muted mb-4">
-						{{ item.description }}
+						Manage users and their roles. Add, edit, or remove users from the system.
 					</p>
 					<UButton
-						color="gray"
+						color="neutral"
 						variant="ghost"
 						icon="i-lucide-code"
 						@click="loadJsonataData"
@@ -53,10 +48,6 @@
 							label="Select organizations for this user"
 						/>
 					</UFormField>
-
-					<UButton type="submit" size="lg" class="self-end">
-						{{ isEditing ? "Update User" : "Add User" }}
-					</UButton>
 				</UForm>
 
 				<div class="w-full mt-6">
@@ -75,36 +66,20 @@
 			</div>
 		</template>
 
-		<template #organizations="{ item }">
-			<div class="space-y-6">
-				<div class="flex justify-between items-center">
-					<p class="text-muted mb-4">
-						{{ item.description }}
-					</p>
-					<UButton
-						color="gray"
-						variant="ghost"
-						icon="i-lucide-code"
-						@click="loadJsonataData"
-					>
-						View JSONata Data
-					</UButton>
-				</div>
-				<OrganizationAdd />
-				<JsonataViewer
-					v-if="showJsonataData"
-					title="Organizations JSONata Data"
-					:data="jsonataData"
-				/>
-			</div>
+		<template #footer>
+			<UButton color="neutral" variant="outline" @click="open = false">
+				Cancel
+			</UButton>
+			<UButton type="submit" @click="handleSubmit">
+				{{ isEditing ? "Update User" : "Add User" }}
+			</UButton>
 		</template>
-	</UTabs>
+	</UModal>
 </template>
 
 <script setup lang="ts">
-	import type { TableColumn, TabsItem } from "@nuxt/ui";
+	import type { TableColumn } from "@nuxt/ui";
 	import { h, resolveComponent } from "vue";
-	import OrganizationAdd from "./OrganizationAdd.vue";
 	import MemberSelect from "./MemberSelect.vue";
 	import JsonataViewer from "./JsonataViewer.vue";
 	import { generateStoreData } from "../../utils/jsonataGenerator";
@@ -116,20 +91,7 @@
 		organizations?: Array<{ name: string }>;
 	}
 
-	const items = [
-		{
-			label: "Users",
-			description: "Manage users and their roles. Add, edit, or remove users from the system.",
-			icon: "i-lucide-users",
-			slot: "users" as const
-		},
-		{
-			label: "Organizations",
-			description: "Create and manage organizations. Add users to organizations and manage their memberships.",
-			icon: "i-lucide-building-2",
-			slot: "organizations" as const
-		}
-	] satisfies TabsItem[];
+	const open = ref(false);
 
 	const schema = z.object({
 		username: z.string({
@@ -424,6 +386,11 @@
 	// Initial load
 	onMounted(async () => {
 		await Promise.all([getUsers(), getOrganizations()]);
+	});
+
+	// Expose the open ref to parent components
+	defineExpose({
+		open
 	});
 </script>
 
