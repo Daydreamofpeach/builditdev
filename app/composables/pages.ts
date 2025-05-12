@@ -2,7 +2,14 @@ export const usePages = () => {
 	const router = useRouter();
 	const { pageCategories } = useAppConfig();
 
-	const routes = router.getRoutes().filter((route) => route.name !== "index" && route.name !== "all");
+	const routes = router.getRoutes().filter((route) => {
+		// Exclude specific routes we don't want in navigation
+		if (route.name === "index" || route.name === "all") return false;
+		if (route.name?.toString().includes("auth-callback")) return false;
+		if (route.name?.toString().includes("organizations-ComponentForm")) return false;
+		if (route.name?.toString().includes("organizations-name")) return false;
+		return true;
+	});
 
 	const categorizedRoutes = routes.reduce((acc, route) => {
 		const category = route.meta.category as string || "other";

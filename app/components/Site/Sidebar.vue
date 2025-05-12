@@ -113,9 +113,38 @@
 		loadOrganizations();
 	});
 
+	// Filter out specific pages we don't want to show in navigation
+	const filteredPages = pages.filter(page => {
+		// Skip auth-callback pages
+		if (page.to?.includes('auth-callback')) return false;
+		// Skip organization form and dynamic pages
+		if (page.to?.includes('organizations/ComponentForm')) return false;
+		if (page.to?.includes('organizations-ComponentForm')) return false;
+		if (page.to?.includes('organizations-name')) return false;
+		if (page.to?.match(/\/organizations\/\[name\]/)) return false;
+		
+		// Also filter by checking children
+		if (page.children && Array.isArray(page.children)) {
+			// Filter out unwanted children
+			page.children = page.children.filter((child: any) => {
+				if (child.to?.includes('auth-callback')) return false;
+				if (child.to?.includes('organizations/ComponentForm')) return false;
+				if (child.to?.includes('organizations-ComponentForm')) return false;
+				if (child.to?.includes('organizations-name')) return false;
+				if (child.to?.match(/\/organizations\/\[name\]/)) return false;
+				return true;
+			});
+		}
+		
+		return true;
+	});
+	
+	// For debugging - remove after fix is confirmed
+	console.log("Filtered pages:", filteredPages);
+
 	const items = ref<any[]>([
 		[
-			...pages,
+			...filteredPages,
 			{
 				label: "Organizations",
 				icon: "i-lucide-building",
@@ -128,7 +157,7 @@
 	watch(organizationPages, (newPages) => {
 		items.value = [
 			[
-				...pages,
+				...filteredPages,
 				{
 					label: "Organizations",
 					icon: "i-lucide-building",
