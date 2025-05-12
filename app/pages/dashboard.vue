@@ -1,13 +1,130 @@
 <template>
-	<div class="flex flex-col items-center justify-center min-h-screen">
+	<!-- User Info & Account Details Section (outside GlowyCard) -->
+	<section class="w-full max-w-4xl mx-auto mt-8 mb-6 px-4">
+		<!-- User Info -->
+		<div class="text-center mb-6">
+			<h2 class="text-2xl font-bold mb-2">{{ currentUser?.username }}</h2>
+			<p class="text-lg text-gray-500 mb-2">{{ currentUser?.email }}</p>
+		</div>
+		<!-- Account Details Collapsible -->
+		<UCard>
+			<template #header>
+				<div class="flex justify-between items-center cursor-pointer" @click="isAccountSectionExpanded = !isAccountSectionExpanded">
+					<UIcon name="i-lucide-user-pen" class="text-primary text-3xl mb-2" />	<h3 class="font-bold">Account & Password</h3>
+					<UIcon :name="isAccountSectionExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
+				</div>
+			</template>
+			<div v-if="isAccountSectionExpanded" class="transition-all duration-300">
+				<UTabs :items="accountTabs" class="w-full">
+					<template #account>
+						<div class="space-y-4">
+						
+							<GlowyCardWrapper>
+								<GlowyCard>
+									<UForm :state="profileState" :schema="profileSchema" class="flex flex-col gap-y-4" @submit="setProfileData">
+										<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+											<UFormField label="Name" name="name">
+												<UInput v-model="profileState.name" variant="subtle" size="lg" />
+											</UFormField>
+											<UFormField label="Email" name="email">
+												<UInput v-model="profileState.email" variant="subtle" size="lg" />
+											</UFormField>
+											<UFormField label="Phone" name="phone">
+												<UInput v-model="profileState.phone" variant="subtle" size="lg" />
+											</UFormField>
+											<UFormField label="Address" name="address">
+												<UInput v-model="profileState.address" variant="subtle" size="lg" />
+											</UFormField>
+										</div>
+										<UButton type="submit" size="lg" class="self-end">Save Profile</UButton>
+									</UForm>
+								</GlowyCard>
+							</GlowyCardWrapper>
+							<GlowyCardWrapper>
+								<GlowyCard>
+									<UForm :state="profileOutputState" class="flex flex-col gap-y-4">
+										<UFormField label="Stored Profile Data" name="profileContent">
+											<UTextarea v-model="profileOutputState.content" variant="subtle" size="lg" :rows="4" readonly />
+										</UFormField>
+									</UForm>
+								</GlowyCard>
+							</GlowyCardWrapper>
+						</div>
+					</template>
+					<template #password>
+						<div class="space-y-4">
+							<h2 class="text-xl font-semibold mb-4">Change Password</h2>
+							<GlowyCardWrapper>
+								<GlowyCard>
+									<UForm :state="passwordState" :schema="passwordSchema" class="flex flex-col gap-y-4" @submit="setPasswordData">
+										<UFormField label="Current Password" name="currentPassword">
+											<UInput v-model="passwordState.currentPassword" type="password" variant="subtle" size="lg" />
+										</UFormField>
+										<UFormField label="New Password" name="newPassword">
+											<UInput v-model="passwordState.newPassword" type="password" variant="subtle" size="lg" />
+										</UFormField>
+										<UFormField label="Confirm New Password" name="confirmPassword">
+											<UInput v-model="passwordState.confirmPassword" type="password" variant="subtle" size="lg" />
+										</UFormField>
+										<UButton type="submit" size="lg" class="self-end">Update Password</UButton>
+									</UForm>
+								</GlowyCard>
+							</GlowyCardWrapper>
+							<GlowyCardWrapper>
+								<GlowyCard>
+									<UForm :state="passwordOutputState" class="flex flex-col justify-center gap-y-4">
+										<UFormField label="Stored Password Data" name="passwordContent">
+											<UTextarea v-model="passwordOutputState.content" variant="subtle" size="lg" :rows="4" readonly />
+										</UFormField>
+									</UForm>
+								</GlowyCard>
+							</GlowyCardWrapper>
+						</div>
+					</template>
+				</UTabs>
+			</div>
+		</UCard>
+	</section>
+
+	<!-- Shell Commands Collapsible Section -->
+	<section class="w-full max-w-4xl mx-auto mb-6 px-4">
+		<UCard>
+			<template #header>
+				<div class="flex justify-between items-center cursor-pointer" @click="isCommandsSectionExpanded = !isCommandsSectionExpanded">
+													<UIcon name="i-lucide-square-terminal	" class="text-primary text-3xl mb-2" />
+					<h3 class="font-semibold">Shell Commands</h3>
+					<UIcon :name="isCommandsSectionExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
+				</div>
+			</template>
+			<div v-if="isCommandsSectionExpanded" class="transition-all duration-300">
+				<div class="flex flex-col items-center py-4">
+					<UButton color="primary" icon="i-lucide-terminal" @click="openCommandsModal">
+						Open Shell Commands
+					</UButton>
+				</div>
+				<div v-if="repositoriesList.length" class="w-full mt-4">
+					<h4 class="font-semibold mb-2">Cloned Repositories</h4>
+					<ul class="divide-y divide-primary">
+						<li v-for="repo in repositoriesList" :key="repo.path" class="py-2 flex flex-col">
+							<span class="font-bold text-primary truncate break-all max-w-full">{{ repo.name }}</span>
+							<span class="text-gray-400 ml-2 truncate break-all max-w-full">{{ repo.url }}</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</UCard>
+	</section>
+
+	<!-- Main Dashboard Card -->
+	<div class="w-full max-w-4xl mx-auto">
 		<GlowyCardWrapper>
-			<GlowyCard class="p-8 flex flex-col items-center gap-4 w-full max-w-4xl">
+			<GlowyCard class="p-8 flex flex-col items-center gap-4 w-full">
 				<!-- New Collapsible Content Section -->
 				<div class="w-full mb-6">
 					<UCard>
 						<template #header>
 							<div class="flex justify-between items-center w-full cursor-pointer" @click="toggleContentSection">
-								<h2 class="text-xl font-bold">Content</h2>
+								<UIcon name="i-lucide-hammer" class="text-primary text-3xl mb-2" /><h3 class=" font-bold">Management</h3>
 								<UIcon 
 									:name="isContentSectionExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" 
 									class="transition-transform"
@@ -27,8 +144,8 @@
 										<UCard class="cursor-pointer" @click="openOrganizationPanel">
 											<div class="flex flex-col items-center p-4">
 												<UIcon name="i-lucide-building" class="text-primary text-3xl mb-2" />
-												<h3 class="font-semibold mb-1">Organizations</h3>
-												<p class="text-center text-sm text-gray-400">Manage your organizations and view their status</p>
+												<h3 class="font-semibold mb-1">Organizations +</h3>
+												<p class="text-center text-sm text-gray-400">Manage organizations and view their status</p>
 											</div>
 										</UCard>
 										<!-- Organizations List Section -->
@@ -54,8 +171,8 @@
 									<div>
 										<UCard class="cursor-pointer" @click="openUserPanel">
 											<div class="flex flex-col items-center p-4">
-												<UIcon name="lucide-user-cog" class="text-primary text-3xl mb-2" />
-												<h3 class="font-semibold mb-1">Users</h3>
+												<UIcon name="lucide-user-round-plus" class="text-primary text-3xl mb-2" />
+												<h3 class="font-semibold mb-1">Users +</h3>
 												<p class="text-center text-sm text-gray-400">View your users panel and add new users</p>
 											</div>
 										</UCard>
@@ -79,6 +196,25 @@
 										</UCard>
 									</div>
 								</div>
+								<!-- New row for Templates and Components -->
+								<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+									<!-- Templates Card -->
+									<UCard class="cursor-pointer">
+										<div class="flex flex-col items-center p-4">
+											<UIcon name="i-lucide-layout-template" class="text-primary text-3xl mb-2" />
+											<h3 class="font-semibold mb-1">Templates +</h3>
+											<p class="text-center text-sm text-gray-400">Manage and browse your templates</p>
+										</div>
+									</UCard>
+									<!-- Components Card -->
+									<UCard class="cursor-pointer">
+										<div class="flex flex-col items-center p-4">
+											<UIcon name="i-lucide-component" class="text-primary text-3xl mb-2" />
+											<h3 class="font-semibold mb-1">Components +</h3>
+											<p class="text-center text-sm text-gray-400">Manage and browse your components</p>
+										</div>
+									</UCard>
+								</div>
 							</div>
 						</div>
 					</UCard>
@@ -90,20 +226,13 @@
 				<!-- Organization Panel Modal -->
 				<OrganizationPanel ref="organizationPanelRef" />
 				
+				<!-- Commands Modal -->
+				<CommandsModal ref="commandsModalRef" />
+				
 				<template v-if="loading">
 					<p>Loading...</p>
 				</template>
 				<template v-else>
-					<!-- Local User Profile -->
-					<div class="text-center mb-8">
-						<h2 class="text-2xl font-bold mb-2">
-							{{ currentUser?.username }}
-						</h2>
-						<p class="text-lg text-gray-500 mb-2">
-							{{ currentUser?.email }}
-						</p>
-					</div>
-
 					<!-- GitHub Section -->
 					<div v-if="githubUser" class="w-full">
 						<div class="flex justify-between items-center mb-4">
@@ -347,8 +476,9 @@
 	import GlowyCardWrapper from "@/components/stunning/GlowyCardWrapper.vue";
 	import UserPanel from "~/components/UserPanel.vue";
 	import OrganizationPanel from "~/components/OrganizationPanel.vue";
+	import CommandsModal from '~/components/CommandsModal.vue';
 	import { useAuth } from "~/composables/useAuth";
-	import { useCurrentUser } from "~/composables/useCurrentUser";
+	import { useUserState } from '~/composables/useUserState';
 	import { useTauriNotificationSendNotification, useTauriStoreLoad } from "#imports";
 	import { z } from 'zod';
 
@@ -366,7 +496,7 @@
 
 	const router = useRouter();
 	const { isAuthenticated, user, fetchRepos, login: githubLogin, logout: githubLogout } = useAuth();
-	const { user: currentUser } = useCurrentUser();
+	const { currentUser, updateProfile, updatePassword, error: userError } = useUserState();
 	const loading = ref(true);
 	const repos = ref<any[]>([]);
 	const page = ref(1);
@@ -392,6 +522,46 @@
 	const isOrganizationsListExpanded = ref(false);
 	const usersList = ref<any[]>([]);
 	const organizationsList = ref<any[]>([]);
+
+	// Add after the user profile info, before the GitHub section
+	const isAccountSectionExpanded = ref(false);
+	const accountTabs = [
+		{ label: 'Account', icon: 'i-lucide-user', slot: 'account' },
+		{ label: 'Password', icon: 'i-lucide-lock', slot: 'password' }
+	];
+	const profileSchema = z.object({
+		name: z.string().optional(),
+		email: z.string().email().optional(),
+		phone: z.string().optional(),
+		address: z.string().optional()
+	});
+	const passwordSchema = z.object({
+		currentPassword: z.string().min(8),
+		newPassword: z.string().min(8),
+		confirmPassword: z.string().min(8)
+	}).refine((data) => data.newPassword === data.confirmPassword, {
+		message: "Passwords don't match",
+		path: ["confirmPassword"]
+	});
+	const profileState = ref({
+		name: currentUser.value?.username || '',
+		email: currentUser.value?.email || '',
+		phone: currentUser.value?.phone || '',
+		address: currentUser.value?.address || ''
+	});
+	const passwordState = ref({
+		currentPassword: '',
+		newPassword: '',
+		confirmPassword: ''
+	});
+	const profileOutputState = ref({ content: '' });
+	const passwordOutputState = ref({ content: '' });
+
+	// Add modal ref
+	const commandsModalRef = ref();
+	// Add collapsible state
+	const isCommandsSectionExpanded = ref(false);
+	const repositoriesList = ref([]);
 
 	function toggleContentSection() {
 		isContentSectionExpanded.value = !isContentSectionExpanded.value;
@@ -613,6 +783,8 @@
 			setupInfiniteScroll();
 		}
 		await Promise.all([fetchUsersList(), fetchOrganizationsList()]);
+		await loadProfileData();
+		fetchRepositoriesList();
 	});
 
 	// Cleanup
@@ -700,6 +872,96 @@
 			organizationsList.value = [];
 		}
 	}
+
+	async function loadProfileData() {
+		if (!currentUser.value?.email) return;
+		
+		profileState.value = {
+			name: currentUser.value.username,
+			email: currentUser.value.email,
+			phone: currentUser.value.phone || '',
+			address: currentUser.value.address || ''
+		};
+		profileOutputState.value.content = JSON.stringify(profileState.value, null, 2);
+	}
+
+	async function setProfileData() {
+		try {
+			const success = await updateProfile({
+				username: profileState.value.name,
+				email: profileState.value.email,
+				phone: profileState.value.phone,
+				address: profileState.value.address
+			});
+
+			if (success) {
+				profileOutputState.value.content = JSON.stringify(profileState.value, null, 2);
+				useTauriNotificationSendNotification({ title: 'Success', body: 'Profile data saved successfully' });
+			} else {
+				useTauriNotificationSendNotification({ title: 'Error', body: userError.value || 'Failed to save profile data' });
+			}
+		} catch (e) {
+			useTauriNotificationSendNotification({ title: 'Error', body: 'Failed to save profile data' });
+		}
+	}
+
+	async function setPasswordData() {
+		try {
+			if (passwordState.value.newPassword !== passwordState.value.confirmPassword) {
+				useTauriNotificationSendNotification({ title: 'Error', body: "Passwords don't match" });
+				return;
+			}
+
+			const success = await updatePassword(
+				passwordState.value.currentPassword,
+				passwordState.value.newPassword
+			);
+
+			if (success) {
+				passwordOutputState.value.content = JSON.stringify({ ...passwordState.value, password: undefined }, null, 2);
+				useTauriNotificationSendNotification({ title: 'Success', body: 'Password updated successfully' });
+				passwordState.value = { currentPassword: '', newPassword: '', confirmPassword: '' };
+			} else {
+				useTauriNotificationSendNotification({ title: 'Error', body: userError.value || 'Failed to update password' });
+			}
+		} catch (e) {
+			useTauriNotificationSendNotification({ title: 'Error', body: 'Failed to update password' });
+		}
+	}
+
+	// Add a watcher for currentUser changes
+	watch(
+		() => currentUser.value?.email,
+		async (newEmail, oldEmail) => {
+			if (newEmail && newEmail !== oldEmail) {
+				await loadProfileData();
+			}
+		}
+	);
+
+	function openCommandsModal() {
+		if (commandsModalRef.value && typeof commandsModalRef.value.open !== 'undefined') {
+			commandsModalRef.value.open = true;
+		}
+	}
+
+	async function fetchRepositoriesList() {
+		try {
+			const store = await useTauriStoreLoad('repositories.bin', { autoSave: false });
+			const repos = await store.get('repositories');
+			repositoriesList.value = Array.isArray(repos) ? repos : [];
+		} catch (e) {
+			repositoriesList.value = [];
+		}
+	}
+
+	// Optionally, refresh when modal closes
+	watch(
+		() => commandsModalRef.value?.open,
+		(open) => {
+			if (open === false) fetchRepositoriesList();
+		}
+	);
 </script>
 
 <style scoped>

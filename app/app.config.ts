@@ -1,7 +1,7 @@
 export default defineAppConfig({
 	app: {
 		name: "Nuxtor",
-		author: "Nicola Spadari",
+		author: "Denthat",
 		repo: "https://github.com/NicolaSpadari/nuxtor",
 		tauriSite: "https://tauri.app",
 		nuxtSite: "https://nuxt.com",
