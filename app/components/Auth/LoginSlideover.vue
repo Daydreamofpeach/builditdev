@@ -1,7 +1,11 @@
 <template>
 	<USlideover v-model:open="isOpen" title="Login" :ui="{ footer: 'justify-end' }">
 		<template #body>
-			<div class="p-4 space-y-6">
+			<div class="p-4 space-y-6">	<SvgoLogo
+				:filled="true"
+				:font-controlled="false"
+				class="mx-auto z-11 rounded-4xl top-4  bg-primary size-20 border-8 border-primary"
+			/>
 				<!-- Local Login Form -->
 				<UForm :state="formState" :schema="schema" @submit="handleLocalLogin">
 					<UFormGroup label="Email" name="email">

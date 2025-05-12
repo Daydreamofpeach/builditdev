@@ -7,7 +7,11 @@
 			<VisuallyHidden>Description</VisuallyHidden>
 		</template>
 
-		<template #body>
+		<template #body>	<SvgoLogo
+				:filled="true"
+				:font-controlled="false"
+				class="mx-auto  z-11 rounded-4xl top-4 bg-primary size-20 border-8 border-primary"
+			/>
 			<div class="flex flex-col h-full">
 				<UNavigationMenu
 					orientation="vertical"

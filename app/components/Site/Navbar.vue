@@ -43,18 +43,18 @@
 							/>
 							<UButton
 								icon="i-lucide-log-in"
-								to="/login"
 								color="primary"
 								variant="ghost"
+								@click="showLoginSlideover = true"
 								:ui="{
 									label: 'sr-only'
 								}"
 							/>
 							<UButton
 								icon="i-lucide-user-plus"
-								to="/signup"
 								color="primary"
 								variant="ghost"
+								@click="showSignupSlideover = true"
 								:ui="{
 									label: 'sr-only'
 								}"
@@ -79,6 +79,18 @@
 			@update:settings="handleSettingsUpdate"
 			@close="showFluidSettings = false"
 		/>
+
+		<!-- Login Slideover -->
+		<LoginSlideover 
+			v-if="showLoginSlideover"
+			@close="showLoginSlideover = false"
+		/>
+
+		<!-- Signup Slideover -->
+		<SignupSlideover
+			v-if="showSignupSlideover"
+			@close="showSignupSlideover = false"
+		/>
 	</header>
 </template>
 
@@ -87,12 +99,16 @@
 	import GlowyCardWrapper from "~/components/stunning/GlowyCardWrapper.vue";
 	import BackgroundColorPicker from "~/components/BackgroundColorPicker.vue";
 	import FluidSettingsSlideover from "~/components/Design/FluidSettingsSlideover.vue";
+	import LoginSlideover from "~/components/Auth/LoginSlideover.vue";
+	import SignupSlideover from "~/components/Auth/SignupSlideover.vue";
 	import { useFluidCursorState } from "~/composables/useFluidCursorState";
 
 	const { pages } = usePages();
 	const { showSidebar } = useSidebar();
 	const { fluidSettings, updateSettings } = useFluidCursorState();
 	const showFluidSettings = ref(false);
+	const showLoginSlideover = ref(false);
+	const showSignupSlideover = ref(false);
 
 	function openFluidSettings() {
 		showFluidSettings.value = true;
