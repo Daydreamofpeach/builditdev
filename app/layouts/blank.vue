@@ -7,7 +7,7 @@
 		<div class="h-screen overflow-hidden">
 			<DesignTopBlob />
 			<DesignBottomBlob />
-
+	
 			<slot />
 		</div>
 	</div>

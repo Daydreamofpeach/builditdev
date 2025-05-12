@@ -33,6 +33,15 @@
 							<ColorPicker />
 							<BackgroundColorPicker />
 							<UButton
+								icon="i-lucide-settings"
+								color="primary"
+								variant="ghost"
+								@click="openFluidSettings"
+								:ui="{
+									label: 'sr-only'
+								}"
+							/>
+							<UButton
 								icon="i-lucide-log-in"
 								to="/login"
 								color="primary"
@@ -62,6 +71,14 @@
 				</UContainer>
 			</GlowyCard>
 		</GlowyCardWrapper>
+
+		<!-- Fluid Settings Slideover -->
+		<FluidSettingsSlideover
+			v-if="showFluidSettings"
+			:settings="fluidSettings"
+			@update:settings="handleSettingsUpdate"
+			@close="showFluidSettings = false"
+		/>
 	</header>
 </template>
 
@@ -69,9 +86,21 @@
 	import GlowyCard from "~/components/stunning/GlowyCard.vue";
 	import GlowyCardWrapper from "~/components/stunning/GlowyCardWrapper.vue";
 	import BackgroundColorPicker from "~/components/BackgroundColorPicker.vue";
+	import FluidSettingsSlideover from "~/components/Design/FluidSettingsSlideover.vue";
+	import { useFluidCursorState } from "~/composables/useFluidCursorState";
 
 	const { pages } = usePages();
 	const { showSidebar } = useSidebar();
+	const { fluidSettings, updateSettings } = useFluidCursorState();
+	const showFluidSettings = ref(false);
+
+	function openFluidSettings() {
+		showFluidSettings.value = true;
+	}
+
+	function handleSettingsUpdate(newSettings: any) {
+		updateSettings(newSettings);
+	}
 
 	// Get organizations for navigation
 	const store = await useTauriStoreLoad("organizations.bin", {
