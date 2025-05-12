@@ -1,12 +1,14 @@
 <template>
-  <div>
-    <label for="neutral-picker" class="sr-only">Background/Neutral Color</label>
-    <select id="neutral-picker" v-model="currentNeutral" @change="updateNeutral" class="bg-neutral text-primary rounded px-2 py-1">
-      <option v-for="color in colorOptions" :key="color" :value="color">
-        {{ color }}
-      </option>
-    </select>
-  </div>
+  <UFormField label="" name="neutralColor">
+    <USelect
+      v-model="currentNeutral"
+      :items="colorOptions.map(c => ({ label: c.charAt(0).toUpperCase() + c.slice(1), value: c }))"
+      variant="subtle"
+      size="lg"
+      class="max-w-[120px] min-w-[120px]"
+      @update:model-value="updateNeutral"
+    />
+  </UFormField>
 </template>
 
 <script setup lang="ts">
