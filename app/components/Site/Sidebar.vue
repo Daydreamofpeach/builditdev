@@ -7,32 +7,42 @@
 			<VisuallyHidden>Description</VisuallyHidden>
 		</template>
 
-		<template #body>	<SvgoLogo
-				:filled="true"
-				:font-controlled="false"
-				class="mx-auto  z-11 rounded-4xl top-4 bg-primary size-20 border-8 border-primary"
-			/>
+		<template #body>
 			<div class="flex flex-col h-full">
-				<UNavigationMenu
-					orientation="vertical"
-					:items="items"
-				/>
-				<div class="mt-auto">
+				<!-- Fixed Logo at Top -->
+				<div class="flex-none mb-4">
+					<SvgoLogo
+						:filled="true"
+						:font-controlled="false"
+						class="mx-auto z-11 rounded-4xl bg-primary size-20 border-8 border-primary"
+					/>
+				</div>
+				
+				<!-- Scrollable Content Area -->
+				<div class="flex-1 overflow-y-auto">
+					<UNavigationMenu
+						orientation="vertical"
+						:items="items"
+					/>
+				</div>
+				
+				<!-- Fixed Login/Signup at Bottom -->
+				<div class="flex-none mt-4">
 					<UDivider class="my-4" />
-					<div class="space-y-2 px-4 pb-10">
+					<div class="space-y-2 px-4 pb-4">
 						<UButton
 							block
-							to="/login"
 							icon="i-lucide-log-in"
 							variant="ghost"
+							@click="showLoginSlideover = true"
 						>
 							Login
 						</UButton>
 						<UButton
 							block
-							to="/signup"
 							icon="i-lucide-user-plus"
 							variant="ghost"
+							@click="showSignupSlideover = true"
 						>
 							Sign Up
 						</UButton>
@@ -41,13 +51,28 @@
 			</div>
 		</template>
 	</USlideover>
+	
+	<!-- Login Slideover -->
+	<LoginSlideover 
+		v-if="showLoginSlideover"
+		@close="showLoginSlideover = false"
+	/>
+
+	<!-- Signup Slideover -->
+	<SignupSlideover
+		v-if="showSignupSlideover"
+		@close="showSignupSlideover = false"
+	/>
 </template>
 
 <script lang="ts" setup>
-
+	import LoginSlideover from "~/components/Auth/LoginSlideover.vue";
+	import SignupSlideover from "~/components/Auth/SignupSlideover.vue";
 
 	const { pages } = usePages();
 	const { showSidebar } = useSidebar();
+	const showLoginSlideover = ref(false);
+	const showSignupSlideover = ref(false);
 
 	// Get organizations for navigation
 	const store = await useTauriStoreLoad("organizations.bin", {
