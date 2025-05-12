@@ -23,13 +23,11 @@
 	const { app: { name } } = useAppConfig();
 	const { pages } = usePages();
 	const { showSidebar } = useSidebar();
-	const tauriVersion = await useTauriAppGetTauriVersion();
 
 	const items = ref<any[]>([
 		pages,
 		[
 			{
-				label: `v${tauriVersion}`,
 				disabled: true
 			}
 		]

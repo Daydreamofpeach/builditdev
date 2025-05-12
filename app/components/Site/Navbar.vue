@@ -24,7 +24,6 @@
 <script lang="ts" setup>
 	const { pages } = usePages();
 	const { showSidebar } = useSidebar();
-	const tauriVersion = await useTauriAppGetTauriVersion();
 
 	const mobileItems = ref<any[]>([
 		[
@@ -64,7 +63,6 @@
 		pages,
 		[
 			{
-				label: `v${tauriVersion}`,
 				disabled: true
 			}
 		]

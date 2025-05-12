@@ -25,7 +25,14 @@
 
 		if (!code) {
 			error.value = "No code received from GitHub";
-			setTimeout(() => window.close(), 2000);
+			setTimeout(() => {
+				if (window.opener) {
+					window.opener.postMessage({ error: "No code received from GitHub" }, window.location.origin);
+					window.close();
+				} else {
+					router.push("/");
+				}
+			}, 2000);
 			return;
 		}
 
@@ -33,14 +40,20 @@
 			// Send the code to the parent window
 			if (window.opener) {
 				window.opener.postMessage({ code }, window.location.origin);
-				window.close();
+				// Don't close the window immediately, let the parent handle it
 			} else {
 				// If no opener (direct navigation), redirect to home
 				router.push("/");
 			}
-		} catch (err) {
-			error.value = err.message || "Error completing authentication";
-			setTimeout(() => window.close(), 2000);
+		} catch (err: unknown) {
+			const errorMessage = err instanceof Error ? err.message : "Error completing authentication";
+			error.value = errorMessage;
+			if (window.opener) {
+				window.opener.postMessage({ error: errorMessage }, window.location.origin);
+				setTimeout(() => window.close(), 2000);
+			} else {
+				setTimeout(() => router.push("/"), 2000);
+			}
 		}
 	});
 </script>
