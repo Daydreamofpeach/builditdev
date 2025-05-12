@@ -48,6 +48,59 @@
 				</div>
 			</div>
 
+			<div v-if="repositories.length > 0" class="border-t border-gray-200 dark:border-gray-800 pt-6">
+				<h3 class="text-lg font-medium mb-4">Repositories</h3>
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					<div v-for="repo in repositories" :key="repo.path" class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+						<div class="flex justify-between items-start mb-4">
+							<div>
+								<h4 class="font-medium">{{ repo.name }}</h4>
+								<p class="text-sm text-gray-500 dark:text-gray-400">{{ repo.url }}</p>
+							</div>
+							<UButton
+								icon="i-lucide-folder-open"
+								color="neutral"
+								variant="ghost"
+								@click="exploreRepo(repo)"
+							/>
+						</div>
+						<div v-if="repo.exploring" class="mt-4">
+							<div class="flex items-center gap-2 mb-2">
+								<UInput
+									v-model="repo.currentPath"
+									variant="subtle"
+									size="sm"
+									class="flex-1"
+									readonly
+								/>
+								<UButton
+									icon="i-lucide-arrow-up"
+									color="neutral"
+									variant="ghost"
+									size="sm"
+									@click="navigateUp(repo)"
+									:disabled="repo.currentPath === repo.path"
+								/>
+							</div>
+							<div class="max-h-48 overflow-y-auto">
+								<div
+									v-for="item in repo.items"
+									:key="item.path"
+									class="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer"
+									@click="handleItemClick(repo, item)"
+								>
+									<UIcon
+										:name="item.type === 'dir' ? 'i-lucide-folder' : 'i-lucide-file'"
+										class="text-gray-500"
+									/>
+									<span class="text-sm">{{ item.name }}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<UForm :state="outputState" class="flex flex-col gap-y-4 items-end">
 				<UFormField label="Command output" name="command-output">
 					<UTextarea v-model="outputState.output" variant="subtle" size="lg" :rows="8" readonly />
@@ -64,6 +117,19 @@
 		description: "Execute shell commands",
 		category: "system"
 	});
+
+	interface Repository {
+		name: string;
+		url: string;
+		path: string;
+		exploring?: boolean;
+		currentPath?: string;
+		items?: Array<{
+			name: string;
+			path: string;
+			type: 'file' | 'dir';
+		}>;
+	}
 
 	const schema = z.object({
 		input: z.string({
@@ -85,11 +151,34 @@
 	});
 	const gitUrl = ref("");
 	const isCloning = ref(false);
+	const repositories = ref<Repository[]>([]);
 
-	const runCommand = (command: string) => {
-		inputState.value.input = command;
-		sendCommand();
+	// Initialize store for repositories
+	const store = await useTauriStoreLoad("repositories.bin", {
+		autoSave: true
+	});
+
+	// Load saved repositories
+	const loadRepositories = async () => {
+		try {
+			const savedRepos = await store.get<Repository[]>("repositories") || [];
+			repositories.value = savedRepos;
+		} catch (error) {
+			console.error("Error loading repositories:", error);
+		}
 	};
+
+	// Save repositories to store
+	const saveRepositories = async () => {
+		try {
+			await store.set("repositories", repositories.value);
+		} catch (error) {
+			console.error("Error saving repositories:", error);
+		}
+	};
+
+	// Load repositories on component mount
+	await loadRepositories();
 
 	const cloneRepo = async () => {
 		if (!gitUrl.value) {
@@ -114,6 +203,20 @@
 			
 			if (response.code === 0) {
 				outputState.value.output += '\n\nRepository cloned successfully!';
+				
+				// Extract repository name from URL
+				const repoName = gitUrl.value.split('/').pop()?.replace('.git', '') || '';
+				
+				// Add to repositories list
+				const newRepo: Repository = {
+					name: repoName,
+					url: gitUrl.value,
+					path: repoName,
+					exploring: false
+				};
+				
+				repositories.value.push(newRepo);
+				await saveRepositories();
 			} else {
 				outputState.value.output += '\n\nError: Clone operation failed.';
 			}
@@ -123,6 +226,60 @@
 			isCloning.value = false;
 			gitUrl.value = "";
 		}
+	};
+
+	const exploreRepo = async (repo: Repository) => {
+		repo.exploring = !repo.exploring;
+		if (repo.exploring) {
+			repo.currentPath = repo.path;
+			await listDirectory(repo);
+		}
+	};
+
+	const listDirectory = async (repo: Repository) => {
+		try {
+			const commandName = 'exec-pwsh';
+			const response = await useTauriShellCommand.create(commandName, [
+				'-Command',
+				`Get-ChildItem -Path "${repo.currentPath}" | Select-Object Name, FullName, @{Name='Type';Expression={if($_.PSIsContainer){'dir'}else{'file'}}} | ConvertTo-Json`
+			]).execute();
+
+			if (response.code === 0) {
+				const items = JSON.parse(response.stdout);
+				repo.items = items.map((item: any) => ({
+					name: item.Name,
+					path: item.FullName,
+					type: item.Type
+				}));
+			}
+		} catch (error) {
+			console.error("Error listing directory:", error);
+		}
+	};
+
+	const handleItemClick = async (repo: Repository, item: { path: string; type: 'file' | 'dir' }) => {
+		if (item.type === 'dir') {
+			repo.currentPath = item.path;
+			await listDirectory(repo);
+		} else {
+			// Handle file click - could add file preview functionality here
+			console.log("File clicked:", item.path);
+		}
+	};
+
+	const navigateUp = async (repo: Repository) => {
+		if (repo.currentPath) {
+			const parentPath = repo.currentPath.split('\\').slice(0, -1).join('\\');
+			if (parentPath.startsWith(repo.path)) {
+				repo.currentPath = parentPath;
+				await listDirectory(repo);
+			}
+		}
+	};
+
+	const runCommand = (command: string) => {
+		inputState.value.input = command;
+		sendCommand();
 	};
 
 	const sendCommand = async () => {
