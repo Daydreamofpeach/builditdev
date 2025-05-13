@@ -2,7 +2,7 @@
 	<header class="top-0 z-50">
 		<GlowyCardWrapper>
 			<GlowyCard>
-				<UContainer class="lg:py-2">
+				<UContainer class="lg:py-2 py-1">
 					<div class="flex justify-between items-center gap-4">
 						<div class="flex-none">
 							<NuxtLink to="/">
@@ -36,10 +36,10 @@
 								icon="i-lucide-settings"
 								color="primary"
 								variant="ghost"
-								@click="openFluidSettings"
 								:ui="{
 									label: 'sr-only'
 								}"
+								@click="openFluidSettings"
 							/>
 							<div v-if="isLoggedIn" class="flex gap-2">
 								<UButton icon="i-lucide-layout-dashboard" color="primary" variant="ghost" to="/dashboard">
@@ -50,8 +50,12 @@
 								</UButton>
 							</div>
 							<div v-else class="flex gap-2">
-								<UButton icon="i-lucide-log-in" color="primary" variant="ghost" @click="showLoginSlideover = true">Login</UButton>
-								<UButton icon="i-lucide-user-plus" color="primary" variant="ghost" @click="showSignupSlideover = true">Sign Up</UButton>
+								<UButton icon="i-lucide-log-in" color="primary" variant="ghost" @click="showLoginSlideover = true">
+									Login
+								</UButton>
+								<UButton icon="i-lucide-user-plus" color="primary" variant="ghost" @click="showSignupSlideover = true">
+									Sign Up
+								</UButton>
 							</div>
 							<UButton
 								icon="i-lucide-menu"
@@ -75,7 +79,7 @@
 		/>
 
 		<!-- Login Slideover -->
-		<LoginSlideover 
+		<LoginSlideover
 			v-if="showLoginSlideover"
 			@close="showLoginSlideover = false"
 		/>
@@ -89,14 +93,14 @@
 </template>
 
 <script lang="ts" setup>
-	import GlowyCard from "~/components/stunning/GlowyCard.vue";
-	import GlowyCardWrapper from "~/components/stunning/GlowyCardWrapper.vue";
-	import BackgroundColorPicker from "~/components/BackgroundColorPicker.vue";
-	import FluidSettingsSlideover from "~/components/Design/FluidSettingsSlideover.vue";
 	import LoginSlideover from "~/components/Auth/LoginSlideover.vue";
 	import SignupSlideover from "~/components/Auth/SignupSlideover.vue";
+	import BackgroundColorPicker from "~/components/BackgroundColorPicker.vue";
+	import FluidSettingsSlideover from "~/components/Design/FluidSettingsSlideover.vue";
+	import GlowyCard from "~/components/stunning/GlowyCard.vue";
+	import GlowyCardWrapper from "~/components/stunning/GlowyCardWrapper.vue";
+	import { useAuthState } from "~/composables/useAuthState";
 	import { useFluidCursorState } from "~/composables/useFluidCursorState";
-	import { useAuthState } from '~/composables/useAuthState';
 
 	const { pages } = usePages();
 	const { showSidebar } = useSidebar();
@@ -117,7 +121,7 @@
 
 	function signOut() {
 		logout();
-		router.push('/');
+		router.push("/");
 	}
 
 	// Get organizations for navigation
@@ -155,42 +159,42 @@
 	// Load organizations on mount
 	onMounted(() => {
 		loadOrganizations();
-		window.addEventListener('organizations-updated', loadOrganizations);
+		window.addEventListener("organizations-updated", loadOrganizations);
 	});
 	onUnmounted(() => {
-		window.removeEventListener('organizations-updated', loadOrganizations);
+		window.removeEventListener("organizations-updated", loadOrganizations);
 	});
 
 	// Filter out specific pages we don't want to show in navigation
-	const filteredPages = pages.filter(page => {
+	const filteredPages = pages.filter((page) => {
 		// Skip auth-callback pages
-		if (page.to?.includes('auth-callback')) return false;
+		if (page.to?.includes("auth-callback")) return false;
 		// Skip organization form and dynamic pages
-		if (page.to?.includes('organizations/ComponentForm')) return false;
-		if (page.to?.includes('organizations-ComponentForm')) return false;
-		if (page.to?.includes('organizations-name')) return false;
+		if (page.to?.includes("organizations/ComponentForm")) return false;
+		if (page.to?.includes("organizations-ComponentForm")) return false;
+		if (page.to?.includes("organizations-name")) return false;
 		if (page.to?.match(/\/organizations\/\[name\]/)) return false;
 		// Skip dashboard page
-		if (page.to === '/dashboard') return false;
-		
+		if (page.to === "/dashboard") return false;
+
 		// Also filter by checking children
 		if (page.children && Array.isArray(page.children)) {
 			// Filter out unwanted children
 			page.children = page.children.filter((child: any) => {
-				if (child.to?.includes('auth-callback')) return false;
-				if (child.to?.includes('organizations/ComponentForm')) return false;
-				if (child.to?.includes('organizations-ComponentForm')) return false;
-				if (child.to?.includes('organizations-name')) return false;
+				if (child.to?.includes("auth-callback")) return false;
+				if (child.to?.includes("organizations/ComponentForm")) return false;
+				if (child.to?.includes("organizations-ComponentForm")) return false;
+				if (child.to?.includes("organizations-name")) return false;
 				if (child.to?.match(/\/organizations\/\[name\]/)) return false;
 				// Skip dashboard child
-				if (child.to === '/dashboard') return false;
+				if (child.to === "/dashboard") return false;
 				return true;
 			});
 		}
-		
+
 		return true;
 	});
-	
+
 	// For debugging - remove after fix is confirmed
 	console.log("Filtered pages in navbar:", filteredPages);
 

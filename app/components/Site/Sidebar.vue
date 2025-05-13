@@ -21,9 +21,9 @@
 							:font-controlled="false"
 							class="mx-auto z-11 rounded-2xl bg-primary size-20 border-8 border-primary cursor-pointer"
 						/>
-					</NuxtLink>
+					</NuxtLink><hr class="mt-8 mb-8 opacity-25">
 				</div>
-				
+
 				<!-- Scrollable Content Area -->
 				<div class="flex-1 overflow-y-auto">
 					<UNavigationMenu
@@ -31,25 +31,33 @@
 						:items="items"
 					/>
 				</div>
-				
+
 				<!-- Fixed Login/Signup at Bottom -->
 				<div class="flex-none mt-4">
-					<UDivider class="my-4" />
+					<hr class="my-4 opacity-25">
 					<div v-if="isLoggedIn" class="space-y-2 px-4 pb-4">
-						<UButton block icon="i-lucide-layout-dashboard" variant="ghost" to="/dashboard">Dashboard</UButton>
-						<UButton block icon="i-lucide-log-out" variant="ghost" color="error" @click="signOut">Sign Out</UButton>
+						<UButton block icon="i-lucide-layout-dashboard" variant="ghost" to="/dashboard">
+							Dashboard
+						</UButton>
+						<UButton block icon="i-lucide-log-out" variant="ghost" color="error" @click="signOut">
+							Sign Out
+						</UButton>
 					</div>
 					<div v-else class="space-y-2 px-4 pb-4">
-						<UButton block icon="i-lucide-log-in" variant="ghost" @click="showLoginSlideover = true">Login</UButton>
-						<UButton block icon="i-lucide-user-plus" variant="ghost" @click="showSignupSlideover = true">Sign Up</UButton>
+						<UButton block icon="i-lucide-log-in" variant="ghost" @click="showLoginSlideover = true">
+							Login
+						</UButton>
+						<UButton block icon="i-lucide-user-plus" variant="ghost" @click="showSignupSlideover = true">
+							Sign Up
+						</UButton>
 					</div>
 				</div>
 			</div>
 		</template>
 	</USlideover>
-	
+
 	<!-- Login Slideover -->
-	<LoginSlideover 
+	<LoginSlideover
 		v-if="showLoginSlideover"
 		@close="showLoginSlideover = false"
 	/>
@@ -64,7 +72,7 @@
 <script lang="ts" setup>
 	import LoginSlideover from "~/components/Auth/LoginSlideover.vue";
 	import SignupSlideover from "~/components/Auth/SignupSlideover.vue";
-	import { useAuthState } from '~/composables/useAuthState';
+	import { useAuthState } from "~/composables/useAuthState";
 
 	const { pages } = usePages();
 	const { showSidebar } = useSidebar();
@@ -111,34 +119,34 @@
 	});
 
 	// Filter out specific pages we don't want to show in navigation
-	const filteredPages = pages.filter(page => {
+	const filteredPages = pages.filter((page) => {
 		// Skip auth-callback pages
-		if (page.to?.includes('auth-callback')) return false;
+		if (page.to?.includes("auth-callback")) return false;
 		// Skip organization form and dynamic pages
-		if (page.to?.includes('organizations/ComponentForm')) return false;
-		if (page.to?.includes('organizations-ComponentForm')) return false;
-		if (page.to?.includes('organizations-name')) return false;
+		if (page.to?.includes("organizations/ComponentForm")) return false;
+		if (page.to?.includes("organizations-ComponentForm")) return false;
+		if (page.to?.includes("organizations-name")) return false;
 		if (page.to?.match(/\/organizations\/\[name\]/)) return false;
 		// Skip dashboard page
-		if (page.to === '/dashboard') return false;
-		
+		if (page.to === "/dashboard") return false;
+
 		// Also filter by checking children
 		if (page.children && Array.isArray(page.children)) {
 			page.children = page.children.filter((child: any) => {
-				if (child.to?.includes('auth-callback')) return false;
-				if (child.to?.includes('organizations/ComponentForm')) return false;
-				if (child.to?.includes('organizations-ComponentForm')) return false;
-				if (child.to?.includes('organizations-name')) return false;
+				if (child.to?.includes("auth-callback")) return false;
+				if (child.to?.includes("organizations/ComponentForm")) return false;
+				if (child.to?.includes("organizations-ComponentForm")) return false;
+				if (child.to?.includes("organizations-name")) return false;
 				if (child.to?.match(/\/organizations\/\[name\]/)) return false;
 				// Skip dashboard child
-				if (child.to === '/dashboard') return false;
+				if (child.to === "/dashboard") return false;
 				return true;
 			});
 		}
-		
+
 		return true;
 	});
-	
+
 	// For debugging - remove after fix is confirmed
 	console.log("Filtered pages:", filteredPages);
 
@@ -169,6 +177,6 @@
 
 	function signOut() {
 		logout();
-		router.push('/');
+		router.push("/");
 	}
 </script>

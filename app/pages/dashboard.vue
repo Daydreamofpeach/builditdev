@@ -578,6 +578,7 @@
 	import FileManager from "~/components/FileManager.vue";
 	import OrganizationPanel from "~/components/OrganizationPanel.vue";
 	import OsInfo from "~/components/OsInfo.vue";
+	import DatabaseStudio from "~/components/studio/DatabaseStudio.vue";
 	import UserPanel from "~/components/UserPanel.vue";
 	import { useAuth } from "~/composables/useAuth";
 	import { useAuthState } from "~/composables/useAuthState";
@@ -1151,6 +1152,27 @@
 
 	// Add new collapsible state
 	const isDataStoresExpanded = ref(false);
+
+	const menuItems = [
+		{
+			id: "database",
+			label: "Database Studio",
+			icon: "i-heroicons-database"
+		}
+		// ... other menu items ...
+	];
+
+	const activeItem = ref("database");
+
+	const activeComponent = computed(() => {
+		switch (activeItem.value) {
+		case "database":
+			return DatabaseStudio;
+		// ... other cases ...
+		default:
+			return null;
+		}
+	});
 </script>
 
 <style scoped>
