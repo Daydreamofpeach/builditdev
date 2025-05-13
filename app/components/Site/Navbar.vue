@@ -153,6 +153,10 @@
 	// Load organizations on mount
 	onMounted(() => {
 		loadOrganizations();
+		window.addEventListener('organizations-updated', loadOrganizations);
+	});
+	onUnmounted(() => {
+		window.removeEventListener('organizations-updated', loadOrganizations);
 	});
 
 	// Filter out specific pages we don't want to show in navigation

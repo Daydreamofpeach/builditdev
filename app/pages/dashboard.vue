@@ -221,10 +221,10 @@
 				</div>
 				
 				<!-- User Panel Modal -->
-				<UserPanel ref="userPanelRef" :open="userPanelOpen" @update:open="userPanelOpen = $event" />
+				<UserPanel ref="userPanelRef" :open="userPanelOpen" @update:open="userPanelOpen = $event" @updated="fetchUsersList" />
 				
 				<!-- Organization Panel Modal -->
-				<OrganizationPanel ref="organizationPanelRef" :open="organizationPanelOpen" @update:open="organizationPanelOpen = $event" />
+				<OrganizationPanel ref="organizationPanelRef" :open="organizationPanelOpen" @update:open="organizationPanelOpen = $event" @updated="fetchOrganizationsList" />
 				
 				<!-- Commands Modal -->
 				<CommandsModal ref="commandsModalRef" />

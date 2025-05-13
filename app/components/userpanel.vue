@@ -136,6 +136,8 @@
 	const showJsonataData = ref(false);
 	const jsonataData = ref<any>(null);
 
+	const emit = defineEmits(['updated']);
+
 	const resetForm = () => {
 		inputState.value = {
 			username: undefined,
@@ -309,6 +311,7 @@
 			}
 
 			await Promise.all([getUsers(), getOrganizations()]);
+			emit('updated');
 			resetForm();
 		} catch (error) {
 			console.error("Error handling user:", error);

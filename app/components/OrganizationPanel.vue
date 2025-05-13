@@ -164,6 +164,8 @@ const getUsers = async () => {
   }
 };
 
+const emit = defineEmits(['updated']);
+
 const handleSubmit = async () => {
   try {
     if (!inputState.value.name || !inputState.value.description) {
@@ -196,6 +198,8 @@ const handleSubmit = async () => {
       });
     }
     await getOrganizations();
+    emit('updated');
+    window.dispatchEvent(new CustomEvent('organizations-updated'));
     resetForm();
   } catch (error) {
     console.error("Error handling organization:", error);
