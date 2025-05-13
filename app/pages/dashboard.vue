@@ -92,7 +92,7 @@
 		<UCard>
 			<template #header>
 				<div class="flex justify-between items-center cursor-pointer" @click="isCommandsSectionExpanded = !isCommandsSectionExpanded">
-													<UIcon name="i-lucide-square-terminal	" class="text-primary text-3xl mb-2" />
+													<UIcon name="i-lucide-square-terminal" class="text-primary text-3xl mb-2" />
 					<h3 class="font-semibold">Shell Commands</h3>
 					<UIcon :name="isCommandsSectionExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
 				</div>
@@ -106,9 +106,18 @@
 				<div v-if="repositoriesList.length" class="w-full mt-4">
 					<h4 class="font-semibold mb-2">Cloned Repositories</h4>
 					<ul class="divide-y divide-primary">
-						<li v-for="repo in repositoriesList" :key="repo.path" class="py-2 flex flex-col">
+						<li v-for="repo in repositoriesList" :key="repo.path" class="py-2 flex flex-col cursor-pointer" @click="toggleRepoExpand(repo)">
 							<span class="font-bold text-primary truncate break-all max-w-full">{{ repo.name }}</span>
 							<span class="text-gray-400 ml-2 truncate break-all max-w-full">{{ repo.url }}</span>
+							<div v-if="expandedRepo === repo.path" class="mt-2">
+								<h4 class="font-medium mb-2">Installation Requirements</h4>
+								<div v-if="requirementsMap[repo.path] && requirementsMap[repo.path].requirements && requirementsMap[repo.path].requirements.length">
+									<ul class="list-disc ml-6">
+										<li v-for="req in requirementsMap[repo.path].requirements" :key="req">{{ req }}</li>
+									</ul>
+								</div>
+								<div v-else class="text-gray-400">No requirements detected.</div>
+							</div>
 						</li>
 					</ul>
 				</div>
@@ -307,11 +316,11 @@
 									<div v-for="(repo, index) in sortedRepos" :key="repo.id" class="bg-neutral rounded-xl p-4 mb-4 relative">
 										<div class="flex justify-between items-start mb-2">
 											<a :href="repo.html_url" target="_blank" class="text-primary hover:underline font-semibold">{{ repo.name }}</a>
-											<button class="text-gray-400 hover:text-white" @click="toggleRepoDetails(repo.id)">
-												<UIcon :name="expandedRepos.includes(repo.id) ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
+											<button class="text-gray-400 hover:text-white" @click="toggleRepoExpand(repo)">
+												<UIcon :name="expandedRepo === repo.path ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
 											</button>
 										</div>
-										<div v-if="expandedRepos.includes(repo.id)" class="space-y-2 mt-2">
+										<div v-if="expandedRepo === repo.path" class="space-y-2 mt-2">
 											<div class="flex items-center gap-2">
 												<span class="text-gray-400">Language:</span>
 												<UBadge v-if="repo.language" color="primary" variant="soft">
@@ -577,6 +586,63 @@
 	const userPanelOpen = ref(false);
 	const organizationPanelOpen = ref(false);
 
+	// Add requirementsMap and fetchRequirements logic (reuse from CommandsModal.vue)
+	const requirementsMap = ref<Record<string, { type: string, requirements: string[] }>>({});
+	const knownManifests = [
+		{ name: 'package.json', type: 'node' },
+		{ name: 'requirements.txt', type: 'python' },
+		{ name: 'pyproject.toml', type: 'python-toml' },
+		{ name: 'Cargo.toml', type: 'rust' }
+	];
+	async function fetchRequirements(repo) {
+		const reqs = [];
+		for (const manifest of knownManifests) {
+			const manifestPath = `${repo.path}\\${manifest.name}`;
+			try {
+				const commandName = 'exec-pwsh';
+				const response = await useTauriShellCommand.create(commandName, [
+					'-Command',
+					`if (Test-Path '${manifestPath}') { Get-Content '${manifestPath}' | Out-String } else { '' }`
+				]).execute();
+				if (response.code === 0 && response.stdout.trim()) {
+					let requirements = [];
+					if (manifest.type === 'node') {
+						try {
+							const pkg = JSON.parse(response.stdout);
+							requirements = [
+								...Object.keys(pkg.dependencies || {}),
+								...Object.keys(pkg.devDependencies || {})
+							];
+						} catch {}
+					} else if (manifest.type === 'python') {
+						requirements = response.stdout.split(/\r?\n/).filter(Boolean);
+					} else if (manifest.type === 'python-toml' || manifest.type === 'rust') {
+						const depLines = response.stdout.split(/\r?\n/).filter(l => l && !l.startsWith('#') && !l.startsWith('['));
+						requirements = depLines.filter(l => l.includes('=')).map(l => l.split('=')[0].trim());
+					}
+					reqs.push({ type: manifest.type, requirements });
+				}
+			} catch {}
+		}
+		requirementsMap.value[repo.path] = reqs.length
+			? reqs.reduce((acc, cur) => ({
+				type: cur.type,
+				requirements: [...(acc.requirements || []), ...cur.requirements]
+			}), { type: '', requirements: [] })
+			: { type: '', requirements: [] };
+	}
+
+	// Add expandedRepo state for toggling
+	const expandedRepo = ref(null);
+	function toggleRepoExpand(repo) {
+		if (expandedRepo.value === repo.path) {
+			expandedRepo.value = null;
+		} else {
+			expandedRepo.value = repo.path;
+			fetchRequirements(repo);
+		}
+	}
+
 	function toggleContentSection() {
 		isContentSectionExpanded.value = !isContentSectionExpanded.value;
 	}
@@ -819,17 +885,6 @@
 	}
 	function setGridSize(size: number) {
 		gridSize.value = size;
-	}
-
-	const expandedRepos = ref<number[]>([]);
-
-	function toggleRepoDetails(repoId: number) {
-		const index = expandedRepos.value.indexOf(repoId);
-		if (index === -1) {
-			expandedRepos.value.push(repoId);
-		} else {
-			expandedRepos.value.splice(index, 1);
-		}
 	}
 
 	function openUserPanel() {
