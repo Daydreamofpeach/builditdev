@@ -4,11 +4,11 @@
 			<link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 		</Head>
 		<!-- Main Content -->
-		<div class="flex-1 flex flex-col items-center pt-8 justify-center gap-2">
+		<div class="flex-1 flex flex-col items-center pt-8 sm:pt-16 justify-center gap-2">
 			<SvgoLogo
 				:filled="true"
 				:font-controlled="false"
-				class="mx-auto animate-pulse z-11 rounded-4xl top-8 infinite bg-primary size-40 border-8 border-primary"
+				class="mx-auto animate-pulse z-11 rounded-4xl top-8 infinite bg-primary size-40 border-8 border-primary mt-8 sm:mt-16 mb-4 sm:mb-8"
 			/>
 
 			<div class="flex flex-col items-center gap-2">
@@ -214,5 +214,25 @@
 <style>
 h1, h2, h3, h4 {
   font-family: 'Silkscreen', cursive;
+}
+
+/* Add responsive spacing for logo and main content */
+.svgo-logo {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+@media (min-width: 640px) {
+  .svgo-logo {
+    margin-top: 4rem;
+    margin-bottom: 2rem;
+  }
+}
+
+/* Adjust vertical spacing for main content on small screens */
+@media (max-width: 640px) {
+  .main-content {
+    gap: 0.5rem;
+    padding-top: 1.5rem;
+  }
 }
 </style>
