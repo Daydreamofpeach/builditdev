@@ -41,24 +41,14 @@
 									label: 'sr-only'
 								}"
 							/>
-							<UButton
-								icon="i-lucide-log-in"
-								color="primary"
-								variant="ghost"
-								@click="showLoginSlideover = true"
-								:ui="{
-									label: 'sr-only'
-								}"
-							/>
-							<UButton
-								icon="i-lucide-user-plus"
-								color="primary"
-								variant="ghost"
-								@click="showSignupSlideover = true"
-								:ui="{
-									label: 'sr-only'
-								}"
-							/>
+							<div v-if="isLoggedIn" class="flex gap-2">
+								<UButton icon="i-lucide-layout-dashboard" color="primary" variant="ghost" to="/dashboard">Dashboard</UButton>
+								<UButton icon="i-lucide-log-out" color="error" variant="ghost" @click="signOut">Sign Out</UButton>
+							</div>
+							<div v-else class="flex gap-2">
+								<UButton icon="i-lucide-log-in" color="primary" variant="ghost" @click="showLoginSlideover = true">Login</UButton>
+								<UButton icon="i-lucide-user-plus" color="primary" variant="ghost" @click="showSignupSlideover = true">Sign Up</UButton>
+							</div>
 							<UButton
 								icon="i-lucide-menu"
 								color="primary"
@@ -102,6 +92,7 @@
 	import LoginSlideover from "~/components/Auth/LoginSlideover.vue";
 	import SignupSlideover from "~/components/Auth/SignupSlideover.vue";
 	import { useFluidCursorState } from "~/composables/useFluidCursorState";
+	import { useAuthState } from '~/composables/useAuthState';
 
 	const { pages } = usePages();
 	const { showSidebar } = useSidebar();
@@ -109,6 +100,8 @@
 	const showFluidSettings = ref(false);
 	const showLoginSlideover = ref(false);
 	const showSignupSlideover = ref(false);
+	const { currentUser, isLoggedIn, logout } = useAuthState();
+	const router = useRouter();
 
 	function openFluidSettings() {
 		showFluidSettings.value = true;
@@ -116,6 +109,11 @@
 
 	function handleSettingsUpdate(newSettings: any) {
 		updateSettings(newSettings);
+	}
+
+	function signOut() {
+		logout();
+		router.push('/');
 	}
 
 	// Get organizations for navigation
@@ -168,6 +166,8 @@
 		if (page.to?.includes('organizations-ComponentForm')) return false;
 		if (page.to?.includes('organizations-name')) return false;
 		if (page.to?.match(/\/organizations\/\[name\]/)) return false;
+		// Skip dashboard page
+		if (page.to === '/dashboard') return false;
 		
 		// Also filter by checking children
 		if (page.children && Array.isArray(page.children)) {
@@ -178,6 +178,8 @@
 				if (child.to?.includes('organizations-ComponentForm')) return false;
 				if (child.to?.includes('organizations-name')) return false;
 				if (child.to?.match(/\/organizations\/\[name\]/)) return false;
+				// Skip dashboard child
+				if (child.to === '/dashboard') return false;
 				return true;
 			});
 		}

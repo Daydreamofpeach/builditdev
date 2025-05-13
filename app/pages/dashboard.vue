@@ -2,6 +2,12 @@
 	<!-- User Info & Account Details Section (outside GlowyCard) -->
 	<section class="w-full max-w-4xl mx-auto mt-8 mb-6 px-4">
 		<!-- User Info -->
+		<div class="flex justify-end gap-2 mb-2">
+			<UButton v-if="isLoggedIn" icon="i-lucide-layout-dashboard" color="primary" variant="ghost" to="/dashboard">Dashboard</UButton>
+			<UButton v-if="isLoggedIn" icon="i-lucide-log-out" color="error" variant="ghost" @click="signOut">Sign Out</UButton>
+			<UButton v-else icon="i-lucide-log-in" color="primary" variant="ghost" @click="() => router.push('/')">Login</UButton>
+			<UButton v-else icon="i-lucide-user-plus" color="primary" variant="ghost" @click="() => router.push('/')">Sign Up</UButton>
+		</div>
 		<div class="text-center mb-6">
 			<h2 class="text-2xl font-bold mb-2">{{ currentUser?.username }}</h2>
 			<p class="text-lg text-gray-500 mb-2">{{ currentUser?.email }}</p>
@@ -478,11 +484,12 @@
 	import UserPanel from "~/components/UserPanel.vue";
 	import OrganizationPanel from "~/components/OrganizationPanel.vue";
 	import CommandsModal from '~/components/CommandsModal.vue';
-	import { useAuth } from "~/composables/useAuth";
-	import { useUserState } from '~/composables/useUserState';
+	import { useAuth } from '~/composables/useAuth';
+	import { useAuthState } from '~/composables/useAuthState';
 	import { useTauriNotificationSendNotification, useTauriStoreLoad } from "#imports";
 	import { z } from 'zod';
 	import OsInfo from '~/components/OsInfo.vue';
+	import { useCurrentUser } from '~/composables/useCurrentUser';
 
 	type DisplayMode = "list" | "grid" | "table";
 	type SortKey = "name" | "language" | "stargazers_count" | "forks_count" | "updated_at";
@@ -503,8 +510,9 @@
 	}
 
 	const router = useRouter();
-	const { isAuthenticated, user, fetchRepos, login: githubLogin, logout: githubLogout } = useAuth();
-	const { currentUser, updateProfile, updatePassword, error: userError } = useUserState();
+	const { currentUser, isLoggedIn, logout: appLogout, login: appLogin } = useAuthState();
+	const { isAuthenticated, user: githubUser, fetchRepos, login: githubLogin, logout: githubLogout } = useAuth();
+	const { user: currentUserFromCurrentUser } = useCurrentUser();
 	const loading = ref(true);
 	const repos = ref<any[]>([]);
 	const page = ref(1);
@@ -589,13 +597,17 @@
 
 	const handleGitHubLogin = async () => {
 		try {
-			if (!githubLogin) {
-				throw new Error('GitHub login function is not available');
-			}
 			await githubLogin();
+			if (githubUser.value) {
+				appLogin({
+					username: githubUser.value.login,
+					email: githubUser.value.email,
+					isGithubConnected: true,
+					githubToken: localStorage.getItem('gh_token') || undefined
+				});
+			}
 		} catch (error) {
-			console.error("Error authenticating with GitHub:", error);
-			// Use Tauri notification
+			console.error('Error authenticating with GitHub:', error);
 			useTauriNotificationSendNotification({
 				title: 'Error',
 				body: error instanceof Error ? error.message : 'Failed to authenticate with GitHub'
@@ -604,6 +616,7 @@
 	};
 
 	const handleGitHubLogout = async () => {
+		appLogout();
 		githubLogout();
 		if (currentUser.value) {
 			const userStore = await useTauriStoreLoad("users.bin", { autoSave: true });
@@ -704,7 +717,7 @@
 		});
 	}
 
-	console.log("user.value:", user.value);
+	console.log("user.value:", currentUser.value);
 
 	watchEffect(() => {
 		if (!currentUser.value) {
@@ -712,14 +725,12 @@
 		} else {
 			loading.value = false;
 			// Only load repos if we haven't loaded them yet and user is authenticated
-			if (currentUser.value.isGithubConnected && isAuthenticated.value && repos.value.length === 0) {
+			if (currentUser.value.isGithubConnected && isLoggedIn && repos.value.length === 0) {
 				loadRepos(true);
 				setupInfiniteScroll();
 			}
 		}
 	});
-
-	const githubUser = computed(() => user.value as GithubUser | null);
 
 	async function loadRepos(reset = false) {
 		if (reset) {
@@ -790,7 +801,7 @@
 
 	// Initial load
 	onMounted(async () => {
-		if (isAuthenticated.value && repos.value.length === 0) {
+		if (isLoggedIn && repos.value.length === 0) {
 			await loadRepos(true);
 			setupInfiniteScroll();
 		}
@@ -988,6 +999,12 @@
 			if (open === false) fetchRepositoriesList();
 		}
 	);
+
+	function signOut() {
+		appLogout();
+		githubLogout();
+		router.push('/');
+	}
 </script>
 
 <style scoped>

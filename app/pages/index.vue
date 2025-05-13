@@ -33,27 +33,34 @@
 				<div class="w-full flex flex-col items-center justify-center" style="height: 180px; margin-top: 24px; margin-bottom: 24px;">
 					<BuilditParticles />
 					<BuilditParticles />
-				</div><div class="flex flex-wrap justify-center pt-6 gap-3 ">
+				</div>
+				<div v-if="isLoggedIn" class="flex flex-wrap justify-center pt-6 gap-3">
 					<GlowyCardWrapper>
 						<GlowyCard>
-							<UButton
-								variant="outline"
-								size="xl"
-								@click="showLogin = true"
-								
-							>
+							<UButton variant="outline" size="lg" to="/dashboard">
+								Dashboard
+							</UButton>
+						</GlowyCard>
+					</GlowyCardWrapper>
+					<GlowyCardWrapper>
+						<GlowyCard>
+							<UButton variant="outline" size="lg" color="error" @click="signOut">
+								Sign Out
+							</UButton>
+						</GlowyCard>
+					</GlowyCardWrapper>
+				</div>
+				<div v-else class="flex flex-wrap justify-center pt-6 gap-3">
+					<GlowyCardWrapper>
+						<GlowyCard>
+							<UButton variant="outline" size="xl" @click="showLogin = true">
 								Login
 							</UButton>
 						</GlowyCard>
 					</GlowyCardWrapper>
 					<GlowyCardWrapper>
 						<GlowyCard>
-							<UButton
-								variant="solid"
-								size="xl"
-								@click="showSignup = true"
-								color="primary"
-							>
+							<UButton variant="solid" size="xl" color="primary" @click="showSignup = true">
 								Sign Up
 							</UButton>
 						</GlowyCard>
@@ -102,7 +109,7 @@
 	import GlowyCard from "@/components/stunning/GlowyCard.vue";
 	import GlowyCardWrapper from "@/components/stunning/GlowyCardWrapper.vue";
 	import BuilditParticles from "@/components/BuilditParticles.vue";
-
+	import { useAuthState } from '~/composables/useAuthState';
 
 	type ColorOption = "red" | "orange" | "amber" | "yellow" | "lime" | "green" | "emerald" | "teal" | "cyan" | "sky" | "blue" | "indigo" | "violet" | "purple" | "fuchsia" | "pink" | "rose" | "slate" | "gray" | "zinc" | "neutral" | "stone";
 
@@ -110,6 +117,8 @@
 	const showSignup = ref(false);
 
 	const appConfig = useAppConfig();
+	const { currentUser, isLoggedIn, logout } = useAuthState();
+	const router = useRouter();
 
 	const colorOptions: ColorOption[] = [
 		"red",
@@ -191,6 +200,11 @@
 	const changeTheme = (color: ColorOption) => {
 		appConfig.ui.colors.primary = color;
 	};
+
+	function signOut() {
+		logout();
+		router.push('/');
+	}
 
 	definePageMeta({
 		layout: "home"

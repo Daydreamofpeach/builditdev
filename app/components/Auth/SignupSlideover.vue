@@ -61,12 +61,14 @@
 import { z } from 'zod';
 import { useUserStore } from '~/composables/useUserStore';
 import { useAuth } from '~/composables/useAuth';
+import { useAuthState } from '~/composables/useAuthState';
 
 const emit = defineEmits<{
 	close: []
 }>();
 
 const { login: githubLogin } = useAuth();
+const { login: setAppLogin } = useAuthState();
 const isOpen = ref(true);
 const toast = useToast();
 
@@ -96,6 +98,12 @@ const handleLocalSignup = async () => {
 			email: formState.value.email,
 			isGithubConnected: false
 		}));
+		// Update global app login state
+		setAppLogin({
+			username: formState.value.username,
+			email: formState.value.email,
+			isGithubConnected: false
+		});
 		// Close slideover
 		emit('close');
 		// Redirect to dashboard

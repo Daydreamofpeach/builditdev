@@ -31,23 +31,13 @@
 				<!-- Fixed Login/Signup at Bottom -->
 				<div class="flex-none mt-4">
 					<UDivider class="my-4" />
-					<div class="space-y-2 px-4 pb-4">
-						<UButton
-							block
-							icon="i-lucide-log-in"
-							variant="ghost"
-							@click="showLoginSlideover = true"
-						>
-							Login
-						</UButton>
-						<UButton
-							block
-							icon="i-lucide-user-plus"
-							variant="ghost"
-							@click="showSignupSlideover = true"
-						>
-							Sign Up
-						</UButton>
+					<div v-if="isLoggedIn" class="space-y-2 px-4 pb-4">
+						<UButton block icon="i-lucide-layout-dashboard" variant="ghost" to="/dashboard">Dashboard</UButton>
+						<UButton block icon="i-lucide-log-out" variant="ghost" color="error" @click="signOut">Sign Out</UButton>
+					</div>
+					<div v-else class="space-y-2 px-4 pb-4">
+						<UButton block icon="i-lucide-log-in" variant="ghost" @click="showLoginSlideover = true">Login</UButton>
+						<UButton block icon="i-lucide-user-plus" variant="ghost" @click="showSignupSlideover = true">Sign Up</UButton>
 					</div>
 				</div>
 			</div>
@@ -70,11 +60,14 @@
 <script lang="ts" setup>
 	import LoginSlideover from "~/components/Auth/LoginSlideover.vue";
 	import SignupSlideover from "~/components/Auth/SignupSlideover.vue";
+	import { useAuthState } from '~/composables/useAuthState';
 
 	const { pages } = usePages();
 	const { showSidebar } = useSidebar();
 	const showLoginSlideover = ref(false);
 	const showSignupSlideover = ref(false);
+	const { currentUser, isLoggedIn, logout } = useAuthState();
+	const router = useRouter();
 
 	// Get organizations for navigation
 	const store = await useTauriStoreLoad("organizations.bin", {
@@ -122,16 +115,19 @@
 		if (page.to?.includes('organizations-ComponentForm')) return false;
 		if (page.to?.includes('organizations-name')) return false;
 		if (page.to?.match(/\/organizations\/\[name\]/)) return false;
+		// Skip dashboard page
+		if (page.to === '/dashboard') return false;
 		
 		// Also filter by checking children
 		if (page.children && Array.isArray(page.children)) {
-			// Filter out unwanted children
 			page.children = page.children.filter((child: any) => {
 				if (child.to?.includes('auth-callback')) return false;
 				if (child.to?.includes('organizations/ComponentForm')) return false;
 				if (child.to?.includes('organizations-ComponentForm')) return false;
 				if (child.to?.includes('organizations-name')) return false;
 				if (child.to?.match(/\/organizations\/\[name\]/)) return false;
+				// Skip dashboard child
+				if (child.to === '/dashboard') return false;
 				return true;
 			});
 		}
@@ -166,4 +162,9 @@
 			]
 		];
 	}, { deep: true });
+
+	function signOut() {
+		logout();
+		router.push('/');
+	}
 </script>
