@@ -1,5 +1,5 @@
 <template>
-	<Html class="overflow-x-hidden">
+	<Html class="overflow-x-hidden dark">
 		<Body class="font-sans antialiased">
 			<UApp>
 				<NuxtLayout>
