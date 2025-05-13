@@ -390,7 +390,8 @@
 
 	// Expose the open ref to parent components
 	defineExpose({
-		open
+		open,
+		resetForm
 	});
 </script>
 

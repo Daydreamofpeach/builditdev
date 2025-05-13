@@ -221,10 +221,10 @@
 				</div>
 				
 				<!-- User Panel Modal -->
-				<UserPanel ref="userPanelRef" />
+				<UserPanel ref="userPanelRef" :open="userPanelOpen" @update:open="userPanelOpen = $event" />
 				
 				<!-- Organization Panel Modal -->
-				<OrganizationPanel ref="organizationPanelRef" />
+				<OrganizationPanel ref="organizationPanelRef" :open="organizationPanelOpen" @update:open="organizationPanelOpen = $event" />
 				
 				<!-- Commands Modal -->
 				<CommandsModal ref="commandsModalRef" />
@@ -470,7 +470,7 @@
 </template>
 
 <script setup lang="ts">
-	import { computed, onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
+	import { computed, onMounted, onUnmounted, ref, watch, watchEffect, nextTick } from "vue";
 	import { useRouter } from "vue-router";
 	import GlowyCard from "@/components/stunning/GlowyCard.vue";
 	import GlowyCardWrapper from "@/components/stunning/GlowyCardWrapper.vue";
@@ -492,6 +492,12 @@
 		avatar_url: string
 		html_url: string
 		bio?: string
+	}
+
+	interface RepositoryInfo {
+		name: string;
+		url: string;
+		path?: string;
 	}
 
 	const router = useRouter();
@@ -561,7 +567,11 @@
 	const commandsModalRef = ref();
 	// Add collapsible state
 	const isCommandsSectionExpanded = ref(false);
-	const repositoriesList = ref([]);
+	const repositoriesList = ref<RepositoryInfo[]>([]);
+
+	// New refs for user and organization panels
+	const userPanelOpen = ref(false);
+	const organizationPanelOpen = ref(false);
 
 	function toggleContentSection() {
 		isContentSectionExpanded.value = !isContentSectionExpanded.value;
@@ -816,15 +826,25 @@
 	}
 
 	function openUserPanel() {
-		if (userPanelRef.value) {
-			userPanelRef.value.open = true;
+		if (userPanelRef.value && typeof userPanelRef.value.resetForm === 'function') {
+			userPanelRef.value.resetForm();
 		}
+		userPanelOpen.value = true;
+		console.log('UserPanel ref:', userPanelRef.value);
+	}
+	function closeUserPanel() {
+		userPanelOpen.value = false;
 	}
 
 	function openOrganizationPanel() {
-		if (organizationPanelRef.value) {
-			organizationPanelRef.value.open = true;
+		if (organizationPanelRef.value && typeof organizationPanelRef.value.resetForm === 'function') {
+			organizationPanelRef.value.resetForm();
 		}
+		organizationPanelOpen.value = true;
+		console.log('OrganizationPanel ref:', organizationPanelRef.value);
+	}
+	function closeOrganizationPanel() {
+		organizationPanelOpen.value = false;
 	}
 
 	async function fetchUsersList() {
@@ -949,7 +969,11 @@
 		try {
 			const store = await useTauriStoreLoad('repositories.bin', { autoSave: false });
 			const repos = await store.get('repositories');
-			repositoriesList.value = Array.isArray(repos) ? repos : [];
+			repositoriesList.value = Array.isArray(repos) ? repos.map((repo: any) => ({
+				name: repo.name,
+				url: repo.url,
+				path: repo.path
+			})) : [];
 		} catch (e) {
 			repositoriesList.value = [];
 		}

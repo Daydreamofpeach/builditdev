@@ -283,7 +283,8 @@ onMounted(async () => {
 });
 
 defineExpose({
-  open
+  open,
+  resetForm
 });
 </script>
 
