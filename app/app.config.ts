@@ -1,8 +1,8 @@
 export default defineAppConfig({
 	app: {
-		name: "Nuxtor",
+		name: "Buildit",
 		author: "Denthat",
-		repo: "https://github.com/NicolaSpadari/nuxtor",
+		repo: "https://github.com/Daydreamofpeach/builditdev.git",
 		tauriSite: "https://tauri.app",
 		nuxtSite: "https://nuxt.com",
 		nuxtUiSite: "https://ui3.nuxt.dev"
