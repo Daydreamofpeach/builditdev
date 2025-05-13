@@ -2,12 +2,6 @@
 	<!-- User Info & Account Details Section (outside GlowyCard) -->
 	<section class="w-full max-w-4xl mx-auto mt-8 mb-6 px-4">
 		<!-- User Info -->
-		<div class="flex justify-end gap-2 mb-2">
-			<UButton v-if="isLoggedIn" icon="i-lucide-layout-dashboard" color="primary" variant="ghost" to="/dashboard">Dashboard</UButton>
-			<UButton v-if="isLoggedIn" icon="i-lucide-log-out" color="error" variant="ghost" @click="signOut">Sign Out</UButton>
-			<UButton v-else icon="i-lucide-log-in" color="primary" variant="ghost" @click="() => router.push('/')">Login</UButton>
-			<UButton v-else icon="i-lucide-user-plus" color="primary" variant="ghost" @click="() => router.push('/')">Sign Up</UButton>
-		</div>
 		<div class="text-center mb-6">
 			<h2 class="text-2xl font-bold mb-2">{{ currentUser?.username }}</h2>
 			<p class="text-lg text-gray-500 mb-2">{{ currentUser?.email }}</p>

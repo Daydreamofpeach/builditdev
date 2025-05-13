@@ -1,17 +1,21 @@
 <template>
-  <UFormField label="" name="neutralColor">
-    <USelect
-      v-model="currentNeutral"
-      :items="colorOptions.map(c => ({ label: c.charAt(0).toUpperCase() + c.slice(1), value: c }))"
-      variant="subtle"
-      size="lg"
-      class="max-w-[120px] min-w-[120px]"
-      @update:model-value="updateNeutral"
-    />
-  </UFormField>
+  <div class="relative inline-block">
+    <UButton icon="i-lucide-palette" size="xs" color="primary" variant="ghost" @click="toggleSelect" ref="buttonRef" />
+    <div v-if="showSelect" class="absolute z-50 mt-2 left-0 min-w-[100px] bg-gray-900 rounded shadow-lg p-2" @click.outside="closeSelect">
+      <USelect
+        v-model="currentNeutral"
+        :items="colorOptions.map(c => ({ label: c.charAt(0).toUpperCase() + c.slice(1), value: c }))"
+        variant="subtle"
+        size="xs"
+        class="w-full"
+        @update:model-value="onSelect"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 const appConfig = useAppConfig();
 
 const colorOptions = [
@@ -21,6 +25,8 @@ const colorOptions = [
 ];
 
 const currentNeutral = ref(appConfig.ui.colors.neutral);
+const showSelect = ref(false);
+const buttonRef = ref();
 
 function updateNeutral() {
   appConfig.ui.colors.neutral = currentNeutral.value;
@@ -36,6 +42,17 @@ function updateNeutral() {
     "--color-neutral",
     `var(--ui-color-${currentNeutral.value}-500)`
   );
+}
+
+function toggleSelect() {
+  showSelect.value = !showSelect.value;
+}
+function closeSelect() {
+  showSelect.value = false;
+}
+function onSelect() {
+  updateNeutral();
+  closeSelect();
 }
 onMounted(updateNeutral);
 </script> 

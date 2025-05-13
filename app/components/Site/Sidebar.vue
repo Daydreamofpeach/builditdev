@@ -1,9 +1,11 @@
 <template>
 	<USlideover :open="showSidebar" @update:open="showSidebar = false">
 		<template #title>
-			<h2 class="text-xl font-bold">
-				Buildit
-			</h2>
+			<NuxtLink to="/">
+				<h2 class="text-xl font-bold cursor-pointer">
+					Buildit
+				</h2>
+			</NuxtLink>
 		</template>
 		<template #description>
 			<VisuallyHidden>Description</VisuallyHidden>
@@ -13,11 +15,13 @@
 			<div class="flex flex-col h-full">
 				<!-- Fixed Logo at Top -->
 				<div class="flex-none mb-4">
-					<SvgoLogo
-						:filled="true"
-						:font-controlled="false"
-						class="mx-auto z-11 rounded-2xl bg-primary size-20 border-8 border-primary"
-					/>
+					<NuxtLink to="/">
+						<SvgoLogo
+							:filled="true"
+							:font-controlled="false"
+							class="mx-auto z-11 rounded-2xl bg-primary size-20 border-8 border-primary cursor-pointer"
+						/>
+					</NuxtLink>
 				</div>
 				
 				<!-- Scrollable Content Area -->

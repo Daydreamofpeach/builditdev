@@ -29,7 +29,7 @@
 								}"
 							/>
 						</div>
-						<div class="flex-none flex items-center gap-0">
+						<div class="flex-none flex items-center gap-2 sm:gap-4">
 							<ColorPicker />
 							<BackgroundColorPicker />
 							<UButton
@@ -42,8 +42,12 @@
 								}"
 							/>
 							<div v-if="isLoggedIn" class="flex gap-2">
-								<UButton icon="i-lucide-layout-dashboard" color="primary" variant="ghost" to="/dashboard">Dashboard</UButton>
-								<UButton icon="i-lucide-log-out" color="error" variant="ghost" @click="signOut">Sign Out</UButton>
+								<UButton icon="i-lucide-layout-dashboard" color="primary" variant="ghost" to="/dashboard">
+									<span class="hidden sm:inline">Dashboard</span>
+								</UButton>
+								<UButton icon="i-lucide-log-out" color="error" variant="ghost" @click="signOut">
+									<span class="sr-only">Sign Out</span>
+								</UButton>
 							</div>
 							<div v-else class="flex gap-2">
 								<UButton icon="i-lucide-log-in" color="primary" variant="ghost" @click="showLoginSlideover = true">Login</UButton>
