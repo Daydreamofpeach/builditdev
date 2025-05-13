@@ -3,15 +3,21 @@
 	<section class="w-full max-w-4xl mx-auto mt-8 mb-6 px-4">
 		<!-- User Info -->
 		<div class="text-center mb-6">
-			<h2 class="text-2xl font-bold mb-2">{{ currentUser?.username }}</h2>
-			<p class="text-lg text-gray-500 mb-2">{{ currentUser?.email }}</p>
+			<h2 class="text-2xl font-bold mb-2">
+				{{ currentUser?.username }}
+			</h2>
+			<p class="text-lg text-gray-500 mb-2">
+				{{ currentUser?.email }}
+			</p>
 		</div>
 		<OsInfo class="mb-6" />
 		<!-- Account Details Collapsible -->
 		<UCard>
 			<template #header>
 				<div class="flex justify-between items-center cursor-pointer" @click="isAccountSectionExpanded = !isAccountSectionExpanded">
-					<UIcon name="i-lucide-user-pen" class="text-primary text-3xl mb-2" />	<h3 class="font-bold">Account & Password</h3>
+					<UIcon name="i-lucide-user-pen" class="text-primary text-3xl mb-2" />	<h3 class="font-bold">
+						Account & Password
+					</h3>
 					<UIcon :name="isAccountSectionExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
 				</div>
 			</template>
@@ -19,7 +25,6 @@
 				<UTabs :items="accountTabs" class="w-full">
 					<template #account>
 						<div class="space-y-4">
-						
 							<GlowyCardWrapper>
 								<GlowyCard>
 									<UForm :state="profileState" :schema="profileSchema" class="flex flex-col gap-y-4" @submit="setProfileData">
@@ -37,7 +42,9 @@
 												<UInput v-model="profileState.address" variant="subtle" size="lg" />
 											</UFormField>
 										</div>
-										<UButton type="submit" size="lg" class="self-end">Save Profile</UButton>
+										<UButton type="submit" size="lg" class="self-end">
+											Save Profile
+										</UButton>
 									</UForm>
 								</GlowyCard>
 							</GlowyCardWrapper>
@@ -54,7 +61,9 @@
 					</template>
 					<template #password>
 						<div class="space-y-4">
-							<h2 class="text-xl font-semibold mb-4">Change Password</h2>
+							<h2 class="text-xl font-semibold mb-4">
+								Change Password
+							</h2>
 							<GlowyCardWrapper>
 								<GlowyCard>
 									<UForm :state="passwordState" :schema="passwordSchema" class="flex flex-col gap-y-4" @submit="setPasswordData">
@@ -67,7 +76,9 @@
 										<UFormField label="Confirm New Password" name="confirmPassword">
 											<UInput v-model="passwordState.confirmPassword" type="password" variant="subtle" size="lg" />
 										</UFormField>
-										<UButton type="submit" size="lg" class="self-end">Update Password</UButton>
+										<UButton type="submit" size="lg" class="self-end">
+											Update Password
+										</UButton>
 									</UForm>
 								</GlowyCard>
 							</GlowyCardWrapper>
@@ -92,8 +103,10 @@
 		<UCard>
 			<template #header>
 				<div class="flex justify-between items-center cursor-pointer" @click="isCommandsSectionExpanded = !isCommandsSectionExpanded">
-													<UIcon name="i-lucide-square-terminal" class="text-primary text-3xl mb-2" />
-					<h3 class="font-semibold">Shell Commands</h3>
+					<UIcon name="i-lucide-square-terminal" class="text-primary text-3xl mb-2" />
+					<h3 class="font-semibold">
+						Shell Commands
+					</h3>
 					<UIcon :name="isCommandsSectionExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
 				</div>
 			</template>
@@ -104,19 +117,27 @@
 					</UButton>
 				</div>
 				<div v-if="repositoriesList.length" class="w-full mt-4">
-					<h4 class="font-semibold mb-2">Cloned Repositories</h4>
+					<h4 class="font-semibold mb-2">
+						Cloned Repositories
+					</h4>
 					<ul class="divide-y divide-primary">
 						<li v-for="repo in repositoriesList" :key="repo.path" class="py-2 flex flex-col cursor-pointer" @click="toggleRepoExpand(repo)">
 							<span class="font-bold text-primary truncate break-all max-w-full">{{ repo.name }}</span>
 							<span class="text-gray-400 ml-2 truncate break-all max-w-full">{{ repo.url }}</span>
 							<div v-if="expandedRepo === repo.path" class="mt-2">
-								<h4 class="font-medium mb-2">Installation Requirements</h4>
+								<h4 class="font-medium mb-2">
+									Installation Requirements
+								</h4>
 								<div v-if="requirementsMap[repo.path] && requirementsMap[repo.path].requirements && requirementsMap[repo.path].requirements.length">
 									<ul class="list-disc ml-6">
-										<li v-for="req in requirementsMap[repo.path].requirements" :key="req">{{ req }}</li>
+										<li v-for="req in requirementsMap[repo.path].requirements" :key="req">
+											{{ req }}
+										</li>
 									</ul>
 								</div>
-								<div v-else class="text-gray-400">No requirements detected.</div>
+								<div v-else class="text-gray-400">
+									No requirements detected.
+								</div>
 							</div>
 						</li>
 					</ul>
@@ -131,7 +152,9 @@
 			<template #header>
 				<div class="flex justify-between items-center cursor-pointer" @click="isFileManagerExpanded = !isFileManagerExpanded">
 					<UIcon name="i-lucide-file-text" class="text-primary text-3xl mb-2" />
-					<h3 class="font-semibold">File Manager</h3>
+					<h3 class="font-semibold">
+						File Manager
+					</h3>
 					<UIcon :name="isFileManagerExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
 				</div>
 			</template>
@@ -150,35 +173,43 @@
 					<UCard>
 						<template #header>
 							<div class="flex justify-between items-center w-full cursor-pointer" @click="toggleContentSection">
-								<UIcon name="i-lucide-hammer" class="text-primary text-3xl mb-2" /><h3 class=" font-bold">Management</h3>
-								<UIcon 
-									:name="isContentSectionExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" 
+								<UIcon name="i-lucide-hammer" class="text-primary text-3xl mb-2" /><h3 class=" font-bold">
+									Management
+								</h3>
+								<UIcon
+									:name="isContentSectionExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'"
 									class="transition-transform"
 								/>
 							</div>
 						</template>
-						
+
 						<div v-if="isContentSectionExpanded" class="transition-all duration-300">
 							<div class="py-4 space-y-4">
 								<p class="text-gray-400">
 									This section contains your content and recent activities. You can manage your projects, view statistics, and access quick links here.
 								</p>
-								
+
 								<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 									<!-- Organizations Card and List -->
 									<div>
 										<UCard class="cursor-pointer" @click="openOrganizationPanel">
 											<div class="flex flex-col items-center p-4">
 												<UIcon name="i-lucide-building" class="text-primary text-3xl mb-2" />
-												<h3 class="font-semibold mb-1">Organizations +</h3>
-												<p class="text-center text-sm text-gray-400">Manage organizations and view their status</p>
+												<h3 class="font-semibold mb-1">
+													Organizations +
+												</h3>
+												<p class="text-center text-sm text-gray-400">
+													Manage organizations and view their status
+												</p>
 											</div>
 										</UCard>
 										<!-- Organizations List Section -->
 										<UCard class="mt-2">
 											<template #header>
 												<div class="flex justify-between items-center cursor-pointer" @click="isOrganizationsListExpanded = !isOrganizationsListExpanded">
-													<h4 class="font-semibold">Organizations List</h4>
+													<h4 class="font-semibold">
+														Organizations List
+													</h4>
 													<UIcon :name="isOrganizationsListExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
 												</div>
 											</template>
@@ -188,7 +219,9 @@
 														<span class="font-bold text-primary truncate break-all max-w-full">{{ org.name }}</span>
 														<span class="text-gray-400 ml-2 truncate break-all max-w-full">{{ org.description }}</span>
 													</li>
-													<li v-if="organizationsList.length === 0" class="text-gray-400 py-2">No organizations found.</li>
+													<li v-if="organizationsList.length === 0" class="text-gray-400 py-2">
+														No organizations found.
+													</li>
 												</ul>
 											</div>
 										</UCard>
@@ -198,15 +231,21 @@
 										<UCard class="cursor-pointer" @click="openUserPanel">
 											<div class="flex flex-col items-center p-4">
 												<UIcon name="lucide-user-round-plus" class="text-primary text-3xl mb-2" />
-												<h3 class="font-semibold mb-1">Users +</h3>
-												<p class="text-center text-sm text-gray-400">View your users panel and add new users</p>
+												<h3 class="font-semibold mb-1">
+													Users +
+												</h3>
+												<p class="text-center text-sm text-gray-400">
+													View your users panel and add new users
+												</p>
 											</div>
 										</UCard>
 										<!-- Users List Section -->
 										<UCard class="mt-2">
 											<template #header>
 												<div class="flex justify-between items-center cursor-pointer" @click="isUsersListExpanded = !isUsersListExpanded">
-													<h4 class="font-semibold">Users List</h4>
+													<h4 class="font-semibold">
+														Users List
+													</h4>
 													<UIcon :name="isUsersListExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
 												</div>
 											</template>
@@ -216,7 +255,9 @@
 														<span class="font-bold text-primary truncate break-all max-w-full">{{ user.username }}</span>
 														<span class="text-gray-400 ml-2 truncate break-all max-w-full">{{ user.email }}</span>
 													</li>
-													<li v-if="usersList.length === 0" class="text-gray-400 py-2">No users found.</li>
+													<li v-if="usersList.length === 0" class="text-gray-400 py-2">
+														No users found.
+													</li>
 												</ul>
 											</div>
 										</UCard>
@@ -228,16 +269,24 @@
 									<UCard class="cursor-pointer">
 										<div class="flex flex-col items-center p-4">
 											<UIcon name="i-lucide-layout-template" class="text-primary text-3xl mb-2" />
-											<h3 class="font-semibold mb-1">Templates +</h3>
-											<p class="text-center text-sm text-gray-400">Manage and browse your templates</p>
+											<h3 class="font-semibold mb-1">
+												Templates +
+											</h3>
+											<p class="text-center text-sm text-gray-400">
+												Manage and browse your templates
+											</p>
 										</div>
 									</UCard>
 									<!-- Components Card -->
 									<UCard class="cursor-pointer">
 										<div class="flex flex-col items-center p-4">
 											<UIcon name="i-lucide-component" class="text-primary text-3xl mb-2" />
-											<h3 class="font-semibold mb-1">Components +</h3>
-											<p class="text-center text-sm text-gray-400">Manage and browse your components</p>
+											<h3 class="font-semibold mb-1">
+												Components +
+											</h3>
+											<p class="text-center text-sm text-gray-400">
+												Manage and browse your components
+											</p>
 										</div>
 									</UCard>
 								</div>
@@ -247,7 +296,9 @@
 									<template #header>
 										<div class="flex justify-between items-center cursor-pointer" @click="isDataStoresExpanded = !isDataStoresExpanded">
 											<UIcon name="i-lucide-database" class="text-primary text-3xl mb-2" />
-											<h3 class="font-semibold">Data Stores</h3>
+											<h3 class="font-semibold">
+												Data Stores
+											</h3>
 											<UIcon :name="isDataStoresExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
 										</div>
 									</template>
@@ -259,16 +310,16 @@
 						</div>
 					</UCard>
 				</div>
-				
+
 				<!-- User Panel Modal -->
 				<UserPanel ref="userPanelRef" :open="userPanelOpen" @update:open="userPanelOpen = $event" @updated="fetchUsersList" />
-				
+
 				<!-- Organization Panel Modal -->
 				<OrganizationPanel ref="organizationPanelRef" :open="organizationPanelOpen" @update:open="organizationPanelOpen = $event" @updated="fetchOrganizationsList" />
-				
+
 				<!-- Commands Modal -->
 				<CommandsModal ref="commandsModalRef" />
-				
+
 				<template v-if="loading">
 					<p>Loading...</p>
 				</template>
@@ -276,7 +327,9 @@
 					<!-- GitHub Section -->
 					<div v-if="githubUser" class="w-full">
 						<div class="flex justify-between items-center mb-4">
-							<h3 class="text-xl font-bold">GitHub Profile</h3>
+							<h3 class="text-xl font-bold">
+								GitHub Profile
+							</h3>
 							<UButton
 								color="error"
 								variant="soft"
@@ -286,7 +339,7 @@
 							</UButton>
 						</div>
 						<div class="flex flex-col lg:flex-row items-center lg:items-start gap-4 mb-8 w-full">
-							<img :src="githubUser.avatar_url" :alt="githubUser.name || githubUser.login" class="rounded-full w-32 h-32 border-4 border-primary mx-auto lg:mx-0" />
+							<img :src="githubUser.avatar_url" :alt="githubUser.name || githubUser.login" class="rounded-full w-32 h-32 border-4 border-primary mx-auto lg:mx-0">
 							<div class="flex-1 w-full text-center lg:text-left">
 								<h2 class="text-2xl font-bold mb-2">
 									{{ githubUser.name || githubUser.login }}
@@ -493,8 +546,12 @@
 						</div>
 					</div>
 					<div v-else class="text-center">
-						<h3 class="text-xl font-bold mb-4">Connect with GitHub</h3>
-						<p class="text-gray-400 mb-4">Connect your GitHub account to view your repositories and profile information.</p>
+						<h3 class="text-xl font-bold mb-4">
+							Connect with GitHub
+						</h3>
+						<p class="text-gray-400 mb-4">
+							Connect your GitHub account to view your repositories and profile information.
+						</p>
 						<UButton
 							color="primary"
 							icon="i-lucide-github"
@@ -510,21 +567,21 @@
 </template>
 
 <script setup lang="ts">
-	import { computed, onMounted, onUnmounted, ref, watch, watchEffect, nextTick } from "vue";
-	import { useRouter } from "vue-router";
+	import { useTauriNotificationSendNotification, useTauriStoreLoad } from "#imports";
 	import GlowyCard from "@/components/stunning/GlowyCard.vue";
 	import GlowyCardWrapper from "@/components/stunning/GlowyCardWrapper.vue";
-	import UserPanel from "~/components/UserPanel.vue";
+	import { computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
+	import { useRouter } from "vue-router";
+	import { z } from "zod";
+	import CommandsModal from "~/components/CommandsModal.vue";
+	import DataStores from "~/components/DataStores.vue";
+	import FileManager from "~/components/FileManager.vue";
 	import OrganizationPanel from "~/components/OrganizationPanel.vue";
-	import CommandsModal from '~/components/CommandsModal.vue';
-	import { useAuth } from '~/composables/useAuth';
-	import { useAuthState } from '~/composables/useAuthState';
-	import { useTauriNotificationSendNotification, useTauriStoreLoad } from "#imports";
-	import { z } from 'zod';
-	import OsInfo from '~/components/OsInfo.vue';
-	import { useCurrentUser } from '~/composables/useCurrentUser';
-	import FileManager from '~/components/FileManager.vue';
-	import DataStores from '~/components/DataStores.vue';
+	import OsInfo from "~/components/OsInfo.vue";
+	import UserPanel from "~/components/UserPanel.vue";
+	import { useAuth } from "~/composables/useAuth";
+	import { useAuthState } from "~/composables/useAuthState";
+	import { useCurrentUser } from "~/composables/useCurrentUser";
 
 	type DisplayMode = "list" | "grid" | "table";
 	type SortKey = "name" | "language" | "stargazers_count" | "forks_count" | "updated_at";
@@ -539,9 +596,9 @@
 	}
 
 	interface RepositoryInfo {
-		name: string;
-		url: string;
-		path?: string;
+		name: string
+		url: string
+		path?: string
 	}
 
 	const router = useRouter();
@@ -558,10 +615,10 @@
 	let observer: IntersectionObserver | null = null;
 	const searchQuery = ref("");
 	const searchTimeout = ref<NodeJS.Timeout | null>(null);
-	
+
 	// Content section state
 	const isContentSectionExpanded = ref(true);
-	
+
 	// User panel modal state
 	const userPanelRef = ref();
 
@@ -577,8 +634,8 @@
 	// Add after the user profile info, before the GitHub section
 	const isAccountSectionExpanded = ref(false);
 	const accountTabs = [
-		{ label: 'Account', icon: 'i-lucide-user', slot: 'account' },
-		{ label: 'Password', icon: 'i-lucide-lock', slot: 'password' }
+		{ label: "Account", icon: "i-lucide-user", slot: "account" },
+		{ label: "Password", icon: "i-lucide-lock", slot: "password" }
 	];
 	const profileSchema = z.object({
 		name: z.string().optional(),
@@ -595,18 +652,18 @@
 		path: ["confirmPassword"]
 	});
 	const profileState = ref({
-		name: currentUser.value?.username || '',
-		email: currentUser.value?.email || '',
-		phone: currentUser.value?.phone || '',
-		address: currentUser.value?.address || ''
+		name: currentUser.value?.username || "",
+		email: currentUser.value?.email || "",
+		phone: currentUser.value?.phone || "",
+		address: currentUser.value?.address || ""
 	});
 	const passwordState = ref({
-		currentPassword: '',
-		newPassword: '',
-		confirmPassword: ''
+		currentPassword: "",
+		newPassword: "",
+		confirmPassword: ""
 	});
-	const profileOutputState = ref({ content: '' });
-	const passwordOutputState = ref({ content: '' });
+	const profileOutputState = ref({ content: "" });
+	const passwordOutputState = ref({ content: "" });
 
 	// Add modal ref
 	const commandsModalRef = ref();
@@ -621,24 +678,24 @@
 	// Add requirementsMap and fetchRequirements logic (reuse from CommandsModal.vue)
 	const requirementsMap = ref<Record<string, { type: string, requirements: string[] }>>({});
 	const knownManifests = [
-		{ name: 'package.json', type: 'node' },
-		{ name: 'requirements.txt', type: 'python' },
-		{ name: 'pyproject.toml', type: 'python-toml' },
-		{ name: 'Cargo.toml', type: 'rust' }
+		{ name: "package.json", type: "node" },
+		{ name: "requirements.txt", type: "python" },
+		{ name: "pyproject.toml", type: "python-toml" },
+		{ name: "Cargo.toml", type: "rust" }
 	];
 	async function fetchRequirements(repo) {
 		const reqs = [];
 		for (const manifest of knownManifests) {
 			const manifestPath = `${repo.path}\\${manifest.name}`;
 			try {
-				const commandName = 'exec-pwsh';
+				const commandName = "exec-pwsh";
 				const response = await useTauriShellCommand.create(commandName, [
-					'-Command',
+					"-Command",
 					`if (Test-Path '${manifestPath}') { Get-Content '${manifestPath}' | Out-String } else { '' }`
 				]).execute();
 				if (response.code === 0 && response.stdout.trim()) {
 					let requirements = [];
-					if (manifest.type === 'node') {
+					if (manifest.type === "node") {
 						try {
 							const pkg = JSON.parse(response.stdout);
 							requirements = [
@@ -646,11 +703,11 @@
 								...Object.keys(pkg.devDependencies || {})
 							];
 						} catch {}
-					} else if (manifest.type === 'python') {
+					} else if (manifest.type === "python") {
 						requirements = response.stdout.split(/\r?\n/).filter(Boolean);
-					} else if (manifest.type === 'python-toml' || manifest.type === 'rust') {
-						const depLines = response.stdout.split(/\r?\n/).filter(l => l && !l.startsWith('#') && !l.startsWith('['));
-						requirements = depLines.filter(l => l.includes('=')).map(l => l.split('=')[0].trim());
+					} else if (manifest.type === "python-toml" || manifest.type === "rust") {
+						const depLines = response.stdout.split(/\r?\n/).filter((l) => l && !l.startsWith("#") && !l.startsWith("["));
+						requirements = depLines.filter((l) => l.includes("=")).map((l) => l.split("=")[0].trim());
 					}
 					reqs.push({ type: manifest.type, requirements });
 				}
@@ -660,8 +717,8 @@
 			? reqs.reduce((acc, cur) => ({
 				type: cur.type,
 				requirements: [...(acc.requirements || []), ...cur.requirements]
-			}), { type: '', requirements: [] })
-			: { type: '', requirements: [] };
+			}), { type: "", requirements: [] })
+			: { type: "", requirements: [] };
 	}
 
 	// Add expandedRepo state for toggling
@@ -695,14 +752,14 @@
 					username: githubUser.value.login,
 					email: githubUser.value.email,
 					isGithubConnected: true,
-					githubToken: localStorage.getItem('gh_token') || undefined
+					githubToken: localStorage.getItem("gh_token") || undefined
 				});
 			}
 		} catch (error) {
-			console.error('Error authenticating with GitHub:', error);
+			console.error("Error authenticating with GitHub:", error);
 			useTauriNotificationSendNotification({
-				title: 'Error',
-				body: error instanceof Error ? error.message : 'Failed to authenticate with GitHub'
+				title: "Error",
+				body: error instanceof Error ? error.message : "Failed to authenticate with GitHub"
 			});
 		}
 	};
@@ -721,11 +778,11 @@
 				isGithubConnected: false,
 				githubToken: undefined
 			};
-			localStorage.setItem('currentUser', JSON.stringify(currentUser.value));
+			localStorage.setItem("currentUser", JSON.stringify(currentUser.value));
 			// Show success notification
 			useTauriNotificationSendNotification({
-				title: 'Success',
-				body: 'Successfully disconnected from GitHub'
+				title: "Success",
+				body: "Successfully disconnected from GitHub"
 			});
 		}
 	};
@@ -835,14 +892,14 @@
 		loadingMore.value = true;
 		try {
 			const newRepos = await fetchRepos(page.value, perPage.value);
-			
+
 			// Check if we got any repos
 			if (!newRepos || newRepos.length === 0) {
 				allLoaded.value = true;
 			} else {
 				// Add new repos to the list
 				repos.value = reset ? newRepos : [...repos.value, ...newRepos];
-				
+
 				// If we got less than requested, we've reached the end
 				if (newRepos.length < perPage.value) {
 					allLoaded.value = true;
@@ -920,22 +977,22 @@
 	}
 
 	function openUserPanel() {
-		if (userPanelRef.value && typeof userPanelRef.value.resetForm === 'function') {
+		if (userPanelRef.value && typeof userPanelRef.value.resetForm === "function") {
 			userPanelRef.value.resetForm();
 		}
 		userPanelOpen.value = true;
-		console.log('UserPanel ref:', userPanelRef.value);
+		console.log("UserPanel ref:", userPanelRef.value);
 	}
 	function closeUserPanel() {
 		userPanelOpen.value = false;
 	}
 
 	function openOrganizationPanel() {
-		if (organizationPanelRef.value && typeof organizationPanelRef.value.resetForm === 'function') {
+		if (organizationPanelRef.value && typeof organizationPanelRef.value.resetForm === "function") {
 			organizationPanelRef.value.resetForm();
 		}
 		organizationPanelOpen.value = true;
-		console.log('OrganizationPanel ref:', organizationPanelRef.value);
+		console.log("OrganizationPanel ref:", organizationPanelRef.value);
 	}
 	function closeOrganizationPanel() {
 		organizationPanelOpen.value = false;
@@ -989,12 +1046,12 @@
 
 	async function loadProfileData() {
 		if (!currentUser.value?.email) return;
-		
+
 		profileState.value = {
 			name: currentUser.value.username,
 			email: currentUser.value.email,
-			phone: currentUser.value.phone || '',
-			address: currentUser.value.address || ''
+			phone: currentUser.value.phone || "",
+			address: currentUser.value.address || ""
 		};
 		profileOutputState.value.content = JSON.stringify(profileState.value, null, 2);
 	}
@@ -1010,19 +1067,19 @@
 
 			if (success) {
 				profileOutputState.value.content = JSON.stringify(profileState.value, null, 2);
-				useTauriNotificationSendNotification({ title: 'Success', body: 'Profile data saved successfully' });
+				useTauriNotificationSendNotification({ title: "Success", body: "Profile data saved successfully" });
 			} else {
-				useTauriNotificationSendNotification({ title: 'Error', body: userError.value || 'Failed to save profile data' });
+				useTauriNotificationSendNotification({ title: "Error", body: userError.value || "Failed to save profile data" });
 			}
 		} catch (e) {
-			useTauriNotificationSendNotification({ title: 'Error', body: 'Failed to save profile data' });
+			useTauriNotificationSendNotification({ title: "Error", body: "Failed to save profile data" });
 		}
 	}
 
 	async function setPasswordData() {
 		try {
 			if (passwordState.value.newPassword !== passwordState.value.confirmPassword) {
-				useTauriNotificationSendNotification({ title: 'Error', body: "Passwords don't match" });
+				useTauriNotificationSendNotification({ title: "Error", body: "Passwords don't match" });
 				return;
 			}
 
@@ -1033,13 +1090,13 @@
 
 			if (success) {
 				passwordOutputState.value.content = JSON.stringify({ ...passwordState.value, password: undefined }, null, 2);
-				useTauriNotificationSendNotification({ title: 'Success', body: 'Password updated successfully' });
-				passwordState.value = { currentPassword: '', newPassword: '', confirmPassword: '' };
-		} else {
-				useTauriNotificationSendNotification({ title: 'Error', body: userError.value || 'Failed to update password' });
+				useTauriNotificationSendNotification({ title: "Success", body: "Password updated successfully" });
+				passwordState.value = { currentPassword: "", newPassword: "", confirmPassword: "" };
+			} else {
+				useTauriNotificationSendNotification({ title: "Error", body: userError.value || "Failed to update password" });
 			}
 		} catch (e) {
-			useTauriNotificationSendNotification({ title: 'Error', body: 'Failed to update password' });
+			useTauriNotificationSendNotification({ title: "Error", body: "Failed to update password" });
 		}
 	}
 
@@ -1054,20 +1111,22 @@
 	);
 
 	function openCommandsModal() {
-		if (commandsModalRef.value && typeof commandsModalRef.value.open !== 'undefined') {
+		if (commandsModalRef.value && typeof commandsModalRef.value.open !== "undefined") {
 			commandsModalRef.value.open = true;
 		}
 	}
 
 	async function fetchRepositoriesList() {
 		try {
-			const store = await useTauriStoreLoad('repositories.bin', { autoSave: false });
-			const repos = await store.get('repositories');
-			repositoriesList.value = Array.isArray(repos) ? repos.map((repo: any) => ({
-				name: repo.name,
-				url: repo.url,
-				path: repo.path
-			})) : [];
+			const store = await useTauriStoreLoad("repositories.bin", { autoSave: false });
+			const repos = await store.get("repositories");
+			repositoriesList.value = Array.isArray(repos)
+				? repos.map((repo: any) => ({
+					name: repo.name,
+					url: repo.url,
+					path: repo.path
+				}))
+				: [];
 		} catch (e) {
 			repositoriesList.value = [];
 		}
@@ -1084,7 +1143,7 @@
 	function signOut() {
 		appLogout();
 		githubLogout();
-		router.push('/');
+		router.push("/");
 	}
 
 	// Add a new collapsible section for File Manager below the Shell Commands section

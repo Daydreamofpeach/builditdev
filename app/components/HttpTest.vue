@@ -1,51 +1,53 @@
 <template>
-  <div class="http-test">
-    <h2>HTTP Test Component</h2>
-    <button @click="testHttp" class="test-button">Test HTTP Request</button>
-    <div v-if="response" class="response">
-      <h3>Response:</h3>
-      <pre>{{ response }}</pre>
-    </div>
-    <div v-if="error" class="error">
-      <h3>Error:</h3>
-      <pre>{{ error }}</pre>
-    </div>
-  </div>
+	<div class="http-test">
+		<h2>HTTP Test Component</h2>
+		<button class="test-button" @click="testHttp">
+			Test HTTP Request
+		</button>
+		<div v-if="response" class="response">
+			<h3>Response:</h3>
+			<pre>{{ response }}</pre>
+		</div>
+		<div v-if="error" class="error">
+			<h3>Error:</h3>
+			<pre>{{ error }}</pre>
+		</div>
+	</div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { fetch } from '@tauri-apps/plugin-http'
+	import { fetch } from "@tauri-apps/plugin-http";
+	import { ref } from "vue";
 
-const response = ref<string | null>(null)
-const error = ref<string | null>(null)
+	const response = ref<string | null>(null);
+	const error = ref<string | null>(null);
 
-async function testHttp() {
-  try {
-    console.log('Starting HTTP request...')
-    const res = await fetch('https://httpbin.org/get', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    
-    console.log('Response received:', res)
-    const data = await res.json()
-    response.value = JSON.stringify(data, null, 2)
-    error.value = null
-  } catch (e) {
-    console.error('Error details:', e)
-    if (e instanceof Error) {
-      error.value = `Error: ${e.message}\nStack: ${e.stack}`
-    } else if (typeof e === 'string') {
-      error.value = e
-    } else {
-      error.value = `Unknown error: ${JSON.stringify(e, null, 2)}`
-    }
-    response.value = null
-  }
-}
+	async function testHttp() {
+		try {
+			console.log("Starting HTTP request...");
+			const res = await fetch("https://httpbin.org/get", {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json"
+				}
+			});
+
+			console.log("Response received:", res);
+			const data = await res.json();
+			response.value = JSON.stringify(data, null, 2);
+			error.value = null;
+		} catch (e) {
+			console.error("Error details:", e);
+			if (e instanceof Error) {
+				error.value = `Error: ${e.message}\nStack: ${e.stack}`;
+			} else if (typeof e === "string") {
+				error.value = e;
+			} else {
+				error.value = `Unknown error: ${JSON.stringify(e, null, 2)}`;
+			}
+			response.value = null;
+		}
+	}
 </script>
 
 <style scoped>
@@ -86,4 +88,4 @@ pre {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
-</style> 
+</style>

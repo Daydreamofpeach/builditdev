@@ -200,9 +200,9 @@
 			lastUpdated: new Date(),
 			entryCount: 0,
 			organizations: [] as Array<{
-				name: string;
-				componentsCount: number;
-				formsCount: number;
+				name: string
+				componentsCount: number
+				formsCount: number
 			}>
 		},
 		{
@@ -242,7 +242,7 @@
 			});
 			const entries = await store.entries();
 			const storeIndex = dataStores.value.findIndex((s) => s.name === storeName);
-			
+
 			if (storeIndex !== -1) {
 				dataStores.value[storeIndex].entryCount = entries.length;
 				dataStores.value[storeIndex].lastUpdated = new Date();
@@ -281,9 +281,9 @@
 
 					const orgResults = await Promise.all(orgs);
 					dataStores.value[storeIndex].organizations = orgResults.filter(Boolean) as Array<{
-						name: string;
-						componentsCount: number;
-						formsCount: number;
+						name: string
+						componentsCount: number
+						formsCount: number
 					}>;
 				}
 			}
@@ -391,7 +391,7 @@
 					timestamp: new Date().toISOString(),
 					data: baseData
 				};
-				
+
 				storeData.value = jsonataData;
 			}
 
@@ -413,4 +413,4 @@
 	});
 </script>
 
-<style scoped></style> 
+<style scoped></style>
