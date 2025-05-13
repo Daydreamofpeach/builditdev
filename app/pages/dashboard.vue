@@ -246,9 +246,9 @@
 								Disconnect GitHub
 							</UButton>
 						</div>
-						<div class="flex items-center gap-4 mb-8">
-							<img :src="githubUser.avatar_url" :alt="githubUser.name || githubUser.login" class="rounded-full w-32 h-32 border-4 border-primary">
-							<div>
+						<div class="flex flex-col lg:flex-row items-center lg:items-start gap-4 mb-8 w-full">
+							<img :src="githubUser.avatar_url" :alt="githubUser.name || githubUser.login" class="rounded-full w-32 h-32 border-4 border-primary mx-auto lg:mx-0" />
+							<div class="flex-1 w-full text-center lg:text-left">
 								<h2 class="text-2xl font-bold mb-2">
 									{{ githubUser.name || githubUser.login }}
 								</h2>
