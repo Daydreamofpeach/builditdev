@@ -1,9 +1,9 @@
 <template>
-  <UModal v-model:open="open" title="Shell Commands" :ui="{ footer: 'justify-end' }">
+  <UModal v-model:open="open" title="Shell Commands" :ui="{ footer: 'justify-end', body: 'overflow-y-auto max-h-[90vh] p-2 sm:p-6' }">
     <template #body>
-      <div class="space-y-6 md:space-y-8">
+      <div class="space-y-6 md:space-y-8 w-full max-w-full">
         <UForm :state="inputState" :schema="schema" class="flex flex-col gap-y-4 items-end" @submit="sendCommand">
-          <div class="flex gap-x-4 w-full">
+          <div class="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4 w-full">
             <UFormField label="Shell type" name="shellType">
               <select
                 v-model="inputState.shellType"
@@ -18,7 +18,7 @@
             </UFormField>
           </div>
 
-          <div class="flex gap-x-4 w-full">
+          <div class="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4 w-full">
             <UButton @click="runCommand('Get-Process')" size="lg" variant="soft">
               List Processes
             </UButton>
@@ -36,7 +36,7 @@
 
         <div class="border-t border-gray-200 dark:border-gray-800 pt-6">
           <h3 class="text-lg font-medium mb-4">Git Clone</h3>
-          <div class="flex gap-x-4 w-full">
+          <div class="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4 w-full">
             <UFormField label="Repository URL" name="gitUrl" class="flex-1">
               <UInput v-model="gitUrl" variant="subtle" size="lg" placeholder="https://github.com/username/repo.git" />
             </UFormField>
@@ -48,50 +48,71 @@
 
         <div v-if="repositories.length > 0" class="border-t border-gray-200 dark:border-gray-800 pt-6">
           <h3 class="text-lg font-medium mb-4">Repositories</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div v-for="repo in repositories" :key="repo.path" class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-              <div class="flex justify-between items-start mb-4">
-                <div>
-                  <h4 class="font-medium">{{ repo.name }}</h4>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">{{ repo.url }}</p>
-                </div>
-                <UButton
-                  icon="i-lucide-folder-open"
-                  color="neutral"
-                  variant="ghost"
-                  @click="exploreRepo(repo)"
-                />
-              </div>
-              <div v-if="repo.exploring" class="mt-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <UInput
-                    v-model="repo.currentPath"
-                    variant="subtle"
-                    size="sm"
-                    class="flex-1"
-                    readonly
-                  />
-                  <UButton
-                    icon="i-lucide-arrow-up"
-                    color="neutral"
-                    variant="ghost"
-                    size="sm"
-                    @click="navigateUp(repo)"
-                    :disabled="repo.currentPath === repo.path"
-                  />
-                </div>
-                <div class="max-h-48 overflow-y-auto">
-                  <div
-                    v-for="item in repo.items"
-                    :key="item.path"
-                    class="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer"
-                    @click="handleItemClick(repo, item)"
-                  >
-                    <UIcon
-                      :name="item.type === 'dir' ? 'i-lucide-folder' : 'i-lucide-file'"
-                      class="text-gray-500"
+          <div class="flex flex-col gap-4 w-full">
+            <div v-for="repo in repositories" :key="repo.path" class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 w-full max-w-full">
+              <div class="flex flex-col gap-2">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-2 w-full">
+                  <div>
+                    <h4 class="font-medium break-all">{{ repo.name }}</h4>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 break-all">{{ repo.url }}</p>
+                  </div>
+                  <div class="flex gap-2">
+                    <UButton
+                      icon="i-lucide-folder-open"
+                      color="neutral"
+                      variant="ghost"
+                      @click="exploreRepo(repo)"
                     />
-                    <span class="text-sm">{{ item.name }}</span>
+                    <UButton
+                      icon="i-lucide-trash"
+                      color="error"
+                      variant="ghost"
+                      @click="deleteRepo(repo)"
+                    />
+                  </div>
+                </div>
+                <div v-if="repo.exploring" class="flex flex-col gap-2 w-full">
+                  <div class="mt-2">
+                    <div class="flex items-center gap-2 mb-2">
+                      <UInput
+                        v-model="repo.currentPath"
+                        variant="subtle"
+                        size="sm"
+                        class="flex-1"
+                        readonly
+                      />
+                      <UButton
+                        icon="i-lucide-arrow-up"
+                        color="neutral"
+                        variant="ghost"
+                        size="sm"
+                        @click="navigateUp(repo)"
+                        :disabled="repo.currentPath === repo.path"
+                      />
+                    </div>
+                    <div class="max-h-48 overflow-y-auto bg-gray-100 dark:bg-gray-900 rounded p-2">
+                      <div
+                        v-for="item in repo.items"
+                        :key="item.path"
+                        class="flex items-center gap-2 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded cursor-pointer"
+                        @click="handleItemClick(repo, item)"
+                      >
+                        <UIcon
+                          :name="item.type === 'dir' ? 'i-lucide-folder' : 'i-lucide-file'"
+                          class="text-gray-500"
+                        />
+                        <span class="text-sm break-all">{{ item.name }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-4">
+                    <h4 class="font-medium mb-2">Installation Requirements</h4>
+                    <div v-if="requirementsMap[repo.path] && requirementsMap[repo.path].requirements && requirementsMap[repo.path].requirements.length">
+                      <ul class="list-disc ml-6">
+                        <li v-for="req in requirementsMap[repo.path].requirements" :key="req">{{ req }}</li>
+                      </ul>
+                    </div>
+                    <div v-else class="text-gray-400">No requirements detected.</div>
                   </div>
                 </div>
               </div>
@@ -99,7 +120,7 @@
           </div>
         </div>
 
-        <UForm :state="outputState" class="flex flex-col gap-y-4 items-end">
+        <UForm :state="outputState" class="flex flex-col gap-y-4 items-end w-full">
           <UFormField label="Command output" name="command-output">
             <UTextarea v-model="outputState.output" variant="subtle" size="lg" :rows="8" readonly />
           </UFormField>
@@ -158,6 +179,53 @@ const outputState = ref({
 const gitUrl = ref("");
 const isCloning = ref(false);
 const repositories = ref<Repository[]>([]);
+const requirementsMap = ref<Record<string, { type: string, requirements: string[] }>>({});
+
+const knownManifests = [
+  { name: 'package.json', type: 'node' },
+  { name: 'requirements.txt', type: 'python' },
+  { name: 'pyproject.toml', type: 'python-toml' },
+  { name: 'Cargo.toml', type: 'rust' }
+];
+
+const fetchRequirements = async (repo: Repository) => {
+  const reqs: { type: string, requirements: string[] }[] = [];
+  for (const manifest of knownManifests) {
+    const manifestPath = `${repo.path}\\${manifest.name}`;
+    try {
+      const commandName = 'exec-pwsh';
+      const response = await useTauriShellCommand.create(commandName, [
+        '-Command',
+        `if (Test-Path '${manifestPath}') { Get-Content '${manifestPath}' | Out-String } else { '' }`
+      ]).execute();
+      if (response.code === 0 && response.stdout.trim()) {
+        let requirements: string[] = [];
+        if (manifest.type === 'node') {
+          try {
+            const pkg = JSON.parse(response.stdout);
+            requirements = [
+              ...Object.keys(pkg.dependencies || {}),
+              ...Object.keys(pkg.devDependencies || {})
+            ];
+          } catch {}
+        } else if (manifest.type === 'python') {
+          requirements = response.stdout.split(/\r?\n/).filter(Boolean);
+        } else if (manifest.type === 'python-toml' || manifest.type === 'rust') {
+          // Simple TOML parse for dependencies
+          const depLines = response.stdout.split(/\r?\n/).filter(l => l.match(/^\s*[^#\[]/));
+          requirements = depLines.filter(l => l.includes('=')).map(l => l.split('=')[0].trim());
+        }
+        reqs.push({ type: manifest.type, requirements });
+      }
+    } catch {}
+  }
+  requirementsMap.value[repo.path] = reqs.length
+    ? reqs.reduce((acc, cur) => ({
+        type: cur.type,
+        requirements: [...(acc.requirements || []), ...cur.requirements]
+      }), { type: '', requirements: [] })
+    : { type: '', requirements: [] };
+};
 
 // Initialize store for repositories
 const store = await useTauriStoreLoad("repositories.bin", {
@@ -168,7 +236,26 @@ const store = await useTauriStoreLoad("repositories.bin", {
 const loadRepositories = async () => {
   try {
     const savedRepos = await store.get<Repository[]>("repositories") || [];
-    repositories.value = savedRepos;
+    // Filter out repositories whose directories no longer exist
+    const validRepos = [];
+    for (const repo of savedRepos) {
+      try {
+        const commandName = 'exec-pwsh';
+        const response = await useTauriShellCommand.create(commandName, [
+          '-Command',
+          `Test-Path -Path "${repo.path}"`
+        ]).execute();
+        
+        if (response.code === 0 && response.stdout.trim() === 'True') {
+          validRepos.push(repo);
+        }
+      } catch (error) {
+        console.error(`Error checking repository ${repo.name}:`, error);
+      }
+    }
+    repositories.value = validRepos;
+    // Save the filtered list back to store
+    await saveRepositories();
   } catch (error) {
     console.error("Error loading repositories:", error);
   }
@@ -239,6 +326,7 @@ const exploreRepo = async (repo: Repository) => {
   if (repo.exploring) {
     repo.currentPath = repo.path;
     await listDirectory(repo);
+    await fetchRequirements(repo);
   }
 };
 
@@ -310,6 +398,27 @@ const sendCommand = async () => {
     outputState.value.output = `Error: ${error}`;
   } finally {
     inputState.value.input = undefined;
+  }
+};
+
+const deleteRepo = async (repo: Repository) => {
+  try {
+    const commandName = 'exec-pwsh';
+    const response = await useTauriShellCommand.create(commandName, [
+      '-Command',
+      `Remove-Item -Path "${repo.path}" -Recurse -Force`
+    ]).execute();
+
+    if (response.code === 0) {
+      // Remove from repositories list
+      repositories.value = repositories.value.filter(r => r.path !== repo.path);
+      await saveRepositories();
+      outputState.value.output = `Repository ${repo.name} deleted successfully.`;
+    } else {
+      outputState.value.output = `Error deleting repository: ${response.stderr}`;
+    }
+  } catch (error) {
+    outputState.value.output = `Error: ${error}`;
   }
 };
 </script> 
