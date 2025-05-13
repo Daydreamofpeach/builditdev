@@ -6,6 +6,7 @@
 			<h2 class="text-2xl font-bold mb-2">{{ currentUser?.username }}</h2>
 			<p class="text-lg text-gray-500 mb-2">{{ currentUser?.email }}</p>
 		</div>
+		<OsInfo class="mb-6" />
 		<!-- Account Details Collapsible -->
 		<UCard>
 			<template #header>
@@ -481,6 +482,7 @@
 	import { useUserState } from '~/composables/useUserState';
 	import { useTauriNotificationSendNotification, useTauriStoreLoad } from "#imports";
 	import { z } from 'zod';
+	import OsInfo from '~/components/OsInfo.vue';
 
 	type DisplayMode = "list" | "grid" | "table";
 	type SortKey = "name" | "language" | "stargazers_count" | "forks_count" | "updated_at";
