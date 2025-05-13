@@ -1,8 +1,8 @@
 <template>
-  <UModal v-model:open="open" title="Organization Management Panel" :ui="{ footer: 'justify-end' }">
+  <UModal v-model:open="open" title="Organization Management Panel" :ui="{ footer: 'justify-end', body: 'overflow-y-auto max-h-[90vh] p-2 sm:p-6' }">
     <template #body>
-      <div class="space-y-6">
-        <div class="flex justify-between items-center">
+      <div class="space-y-6 w-full max-w-full">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-y-2 gap-x-4">
           <p class="text-muted mb-4">
             Manage organizations and their members. Add, edit, or remove organizations from the system.
           </p>
@@ -16,7 +16,7 @@
           </UButton>
         </div>
 
-        <UForm :state="inputState" :schema="schema" class="flex flex-col gap-4" @submit="handleSubmit">
+        <UForm :state="inputState" :schema="schema" class="flex flex-col gap-4 w-full" @submit="handleSubmit">
           <UFormField label="Organization Name" name="name">
             <UInput v-model="inputState.name" variant="subtle" size="lg" class="w-full" />
           </UFormField>
@@ -35,7 +35,7 @@
           </UFormField>
         </UForm>
 
-        <div class="w-full mt-6">
+        <div class="w-full mt-6 overflow-x-auto">
           <OrganizationTable
             :organizations="organizationsList"
             @delete="removeOrganization"

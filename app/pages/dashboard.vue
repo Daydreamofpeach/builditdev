@@ -125,6 +125,22 @@
 		</UCard>
 	</section>
 
+	<!-- File Manager Collapsible Section -->
+	<section class="w-full max-w-4xl mx-auto mb-6 px-4">
+		<UCard>
+			<template #header>
+				<div class="flex justify-between items-center cursor-pointer" @click="isFileManagerExpanded = !isFileManagerExpanded">
+					<UIcon name="i-lucide-file-text" class="text-primary text-3xl mb-2" />
+					<h3 class="font-semibold">File Manager</h3>
+					<UIcon :name="isFileManagerExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
+				</div>
+			</template>
+			<div v-if="isFileManagerExpanded" class="transition-all duration-300">
+				<FileManager />
+			</div>
+		</UCard>
+	</section>
+
 	<!-- Main Dashboard Card -->
 	<div class="w-full max-w-4xl mx-auto">
 		<GlowyCardWrapper>
@@ -225,6 +241,20 @@
 										</div>
 									</UCard>
 								</div>
+
+								<!-- Data Stores Section -->
+								<UCard class="mt-4">
+									<template #header>
+										<div class="flex justify-between items-center cursor-pointer" @click="isDataStoresExpanded = !isDataStoresExpanded">
+											<UIcon name="i-lucide-database" class="text-primary text-3xl mb-2" />
+											<h3 class="font-semibold">Data Stores</h3>
+											<UIcon :name="isDataStoresExpanded ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'" />
+										</div>
+									</template>
+									<div v-if="isDataStoresExpanded" class="transition-all duration-300">
+										<DataStores />
+									</div>
+								</UCard>
 							</div>
 						</div>
 					</UCard>
@@ -493,6 +523,8 @@
 	import { z } from 'zod';
 	import OsInfo from '~/components/OsInfo.vue';
 	import { useCurrentUser } from '~/composables/useCurrentUser';
+	import FileManager from '~/components/FileManager.vue';
+	import DataStores from '~/components/DataStores.vue';
 
 	type DisplayMode = "list" | "grid" | "table";
 	type SortKey = "name" | "language" | "stargazers_count" | "forks_count" | "updated_at";
@@ -1003,7 +1035,7 @@
 				passwordOutputState.value.content = JSON.stringify({ ...passwordState.value, password: undefined }, null, 2);
 				useTauriNotificationSendNotification({ title: 'Success', body: 'Password updated successfully' });
 				passwordState.value = { currentPassword: '', newPassword: '', confirmPassword: '' };
-			} else {
+		} else {
 				useTauriNotificationSendNotification({ title: 'Error', body: userError.value || 'Failed to update password' });
 			}
 		} catch (e) {
@@ -1054,6 +1086,12 @@
 		githubLogout();
 		router.push('/');
 	}
+
+	// Add a new collapsible section for File Manager below the Shell Commands section
+	const isFileManagerExpanded = ref(false);
+
+	// Add new collapsible state
+	const isDataStoresExpanded = ref(false);
 </script>
 
 <style scoped>
