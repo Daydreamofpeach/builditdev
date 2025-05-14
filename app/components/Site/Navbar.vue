@@ -58,10 +58,10 @@
 								</UButton>
 							</div>
 							<UButton
+								v-if="isLoggedIn"
 								icon="i-lucide-menu"
 								color="primary"
 								variant="ghost"
-								class="lg:hidden"
 								@click="showSidebar = true"
 							/>
 						</div>
@@ -108,7 +108,7 @@
 	const showFluidSettings = ref(false);
 	const showLoginSlideover = ref(false);
 	const showSignupSlideover = ref(false);
-	const { currentUser, isLoggedIn, logout } = useAuthState();
+	const { isLoggedIn, logout } = useAuthState();
 	const router = useRouter();
 
 	function openFluidSettings() {
@@ -123,47 +123,6 @@
 		logout();
 		router.push("/");
 	}
-
-	// Get organizations for navigation
-	const store = await useTauriStoreLoad("organizations.bin", {
-		autoSave: true
-	});
-
-	const organizationPages = ref<any[]>([]);
-
-	const loadOrganizations = async () => {
-		try {
-			const orgs = await store.entries();
-			const filteredOrgs = orgs
-				.filter(([key]) => key.startsWith("org_"))
-				.map(([_, value]) => {
-					try {
-						const org = JSON.parse(value as string);
-						return {
-							label: org.name,
-							icon: "i-lucide-building",
-							to: `/organizations/${org.name}`
-						};
-					} catch (e) {
-						console.error("Error parsing organization data:", e);
-						return null;
-					}
-				})
-				.filter(Boolean);
-			organizationPages.value = filteredOrgs;
-		} catch (error) {
-			console.error("Error loading organizations:", error);
-		}
-	};
-
-	// Load organizations on mount
-	onMounted(() => {
-		loadOrganizations();
-		window.addEventListener("organizations-updated", loadOrganizations);
-	});
-	onUnmounted(() => {
-		window.removeEventListener("organizations-updated", loadOrganizations);
-	});
 
 	// Filter out specific pages we don't want to show in navigation
 	const filteredPages = pages.filter((page) => {
@@ -195,9 +154,6 @@
 		return true;
 	});
 
-	// For debugging - remove after fix is confirmed
-	console.log("Filtered pages in navbar:", filteredPages);
-
 	const desktopItems = ref<any[]>([
 		[
 			...filteredPages.map((page) => ({
@@ -205,35 +161,7 @@
 				ui: {
 					label: "sr-only"
 				}
-			})),
-			{
-				icon: "i-lucide-building",
-				children: organizationPages.value,
-				ui: {
-					label: "sr-only"
-				}
-			}
+			}))
 		]
 	]);
-
-	// Watch for changes in organization pages
-	watch(organizationPages, (newPages) => {
-		desktopItems.value = [
-			[
-				...filteredPages.map((page) => ({
-					...page,
-					ui: {
-						label: "sr-only"
-					}
-				})),
-				{
-					icon: "i-lucide-building",
-					children: newPages,
-					ui: {
-						label: "sr-only"
-					}
-				}
-			]
-		];
-	}, { deep: true });
 </script>

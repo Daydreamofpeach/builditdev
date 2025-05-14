@@ -1,5 +1,5 @@
 <template>
-	<USlideover :open="showSidebar" @update:open="showSidebar = false">
+	<USlideover :open="showSidebar && isLoggedIn" @update:open="showSidebar = false">
 		<template #title>
 			<NuxtLink to="/">
 				<h2 class="text-xl font-bold cursor-pointer">
@@ -78,7 +78,7 @@
 	const { showSidebar } = useSidebar();
 	const showLoginSlideover = ref(false);
 	const showSignupSlideover = ref(false);
-	const { currentUser, isLoggedIn, logout } = useAuthState();
+	const { isLoggedIn, logout } = useAuthState();
 	const router = useRouter();
 
 	// Get organizations for navigation
